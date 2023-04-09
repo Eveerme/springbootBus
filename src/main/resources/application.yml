@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/testdb?serverTimezone=UTC
+    username: root
+    password: 123456
+    name: defaultDataSource
+  application:
+    name: springBootBusManage
+server:
+  port: 8080
+
+#下面这些内容是为了让MyBatis映射
+#指定Mybatis的Mapper文件
+mybatis:
+  mapper-locations: classpath:mappers/*xml
+  #指定Mybatis的实体目录
+  type-aliases-package: com.chen.springboot.mybatis.entity
+  configuration:
+    map-underscore-to-camel-case: true #自动驼峰映射
+
+logging:
+  level:
+    com.chen.springboot: DEBUG #开启日志
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
