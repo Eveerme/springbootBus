@@ -1,7 +1,8 @@
 package com.chen.sbbus.controller;
 
 import com.chen.sbbus.entity.Bus;
-import com.chen.sbbus.service.impl.BusServiceImpl;
+import com.chen.sbbus.service.BusService;
+
 import com.chen.sbbus.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class BusController {
 
     @Autowired
-    private BusServiceImpl busService;
+    private BusService busService;
 
     //查询所有Bus
     @GetMapping
@@ -33,5 +34,15 @@ public class BusController {
     public R updateBusInfo(@RequestBody Bus bus){
         busService.updateBus(bus);
         return new R(true);
+    }
+    @DeleteMapping("/delete/{id}")
+    public R deleteBusById(@PathVariable String id){
+        return new R(busService.deleteBusById(id));
+    }
+
+    @GetMapping("/page")
+    public R getAllBusByPage(@RequestParam("currentPage") int currentPage,
+                             @RequestParam("pageSize") int pageSize){
+        return new R(true,busService.getBusByPage(currentPage,pageSize));
     }
 }

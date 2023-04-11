@@ -31,6 +31,18 @@ public class JWTUtils {
                 .sign(Algorithm.HMAC256(u.getPassword()));
     }
 
+    public static String getMToken(ManagerLoginRequest u) {
+        Calendar instance = Calendar.getInstance();
+        //默认令牌过期时间7天
+        instance.add(Calendar.DATE, 7);
+
+        JWTCreator.Builder builder = JWT.create();
+        builder.withClaim("account", u.getAccount());
+
+        return builder.withExpiresAt(instance.getTime())
+                .sign(Algorithm.HMAC256(u.getPassword()));
+    }
+
     /**
      * 验证token合法性 成功返回token
      */

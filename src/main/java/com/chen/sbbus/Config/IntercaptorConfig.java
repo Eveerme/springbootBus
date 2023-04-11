@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 
-@Configuration
+//@Configuration
 public class IntercaptorConfig implements WebMvcConfigurer {
 
     @Override
@@ -16,6 +16,6 @@ public class IntercaptorConfig implements WebMvcConfigurer {
                 //拦截的路径
                 .addPathPatterns("/**")
                 //排除登录接口
-                .excludePathPatterns("/driver/login","/manage/**");
+                .excludePathPatterns("/driver/login","/manage/login");
     }
 }
