@@ -10,11 +10,11 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface DriverMapper extends BaseMapper<Driver> {
     @Select("select * from db_driver where account=#{account} and password=#{password}")
-    Driver getDriverByAP(@Param("account") String account,@Param("password") String password);
+    Driver getDriverByAP(@Param("acco.unt") String account,@Param("password") String password);//根据账号密码查找司机
     @Select("select password from db_driver where account=#{account}")
-    String getDriverPasswordByAccount(@Param("account")String account);
+    String getDriverPasswordByAccount(@Param("account")String account);//根据账号查找密码
     @Select("SELECT id,account,name,sex,phone,address,create_time,bus_id from db_driver where id = #{id}")
-    DriverInfo getDriverById(@Param("id") Integer id);
+    DriverInfo getDriverById(@Param("id") Integer id);//根据id显示所有信息
     @Select("SELECT id,account,name,sex,phone,address,create_time,bus_id from db_driver where account = #{account}")
-    DriverInfo getDriverByAccount(@Param("account") String account);
+    DriverInfo getDriverByAccount(@Param("account") String account);//根据账号显示所有信息
 }

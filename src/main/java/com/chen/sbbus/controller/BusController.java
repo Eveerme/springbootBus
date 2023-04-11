@@ -23,9 +23,9 @@ public class BusController {
     public R getBusById(@PathVariable("id") Integer id){
         return new R(true,busService.getBusById(id));
     }
-    //插入新的bus信息
+
     @PostMapping("/insert")
-    public R insertBusInfo(@RequestBody Bus bus){
+    public R insertBusInfo(@RequestBody Bus bus){//插入新的bus信息
         busService.insertBus(bus);
         return new R(true);
     }
