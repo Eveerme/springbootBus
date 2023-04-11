@@ -1,15 +1,11 @@
 package com.chen.sbbus.controller;
 
+import com.chen.sbbus.entity.Driver;
 import com.chen.sbbus.service.DriverService;
-import com.chen.sbbus.utils.DriverInfo;
-import com.chen.sbbus.utils.JWTUtils;
-import com.chen.sbbus.utils.LoginRequest;
-import com.chen.sbbus.utils.LoginResponse;
+import com.chen.sbbus.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Date;
 
 @RestController
@@ -32,6 +28,45 @@ public class DriverController {
         else{
             return new LoginResponse(false,null,null);
         }
+    }
+    @GetMapping
+    public R getAllDriver(){
+        return new R(true,driverService.list());
+    }
+
+    //根据用户查询Id
+    @GetMapping("/{id}")
+    public R getAllDriverById(@PathVariable("id") Integer id){
+        return new R(true,driverService.getById(id));
+    }
+
+    //根据Id删除用户
+    @DeleteMapping("/delete/{id}")
+    public R deleteDriverById(@PathVariable Integer id){
+        return new R(driverService.removeById(id));
+    }
+
+    //新增用户
+    @PostMapping("/insert")
+    public R insertDriver(@RequestBody Driver driver){
+        return new R(driverService.
+                insertDriver(driver));
+    }
+    //新更新用户
+    @PostMapping("/update")
+    public R updateDriver(@RequestBody Driver driver){
+        return new R(driverService.updateDriver(driver));
+    }
+
+
+    //分页查询接口
+    //接口路径： 相当于 /user/page?currentPage=1&pageSize=5
+    //使用@RequestParam接收
+    @GetMapping("/page")
+    public R getAllDriverByPage(@RequestParam("currentPage")int currentPage,
+                               @RequestParam("pageSize")int pageSize,
+                               @RequestParam("name")String name){
+        return new R(true,driverService.getDriverByPage(currentPage, pageSize,name));
     }
 
 }

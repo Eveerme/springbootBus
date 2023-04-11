@@ -2,10 +2,11 @@ package com.chen.sbbus.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.chen.sbbus.entity.Driver;
+import com.chen.sbbus.entity.Driver;
 import com.chen.sbbus.utils.DriverInfo;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+
+import java.sql.Date;
 
 @Mapper
 public interface DriverMapper extends BaseMapper<Driver> {
@@ -17,4 +18,11 @@ public interface DriverMapper extends BaseMapper<Driver> {
     DriverInfo getDriverById(@Param("id") Integer id);//根据id显示所有信息
     @Select("SELECT id,account,name,sex,phone,address,create_time,bus_id from db_driver where account = #{account}")
     DriverInfo getDriverByAccount(@Param("account") String account);//根据账号显示所有信息
+    
+    @Insert("INSERT INTO db_driver(account,password,sex,phone,address,create_time,busId) VALUES(#{account},#{password},#{sex},#{phone},#{address},#{create_time},#{busId}")
+    Integer insertDriver(Driver driver);//插入一条新的站点信息
+
+    @Update("update db_driver set account=#{account}, password=#{password}, name=#{name}, sex=#{sex}, phone=#{phone} , address=#{address}, create_time=#{create_time},busId=#{busId} where id=#{id}")
+    Integer updateDriver(Driver driver);//修改站点信息
+
 }

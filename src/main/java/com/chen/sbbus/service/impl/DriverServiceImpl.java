@@ -1,8 +1,10 @@
 package com.chen.sbbus.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.sbbus.entity.Driver;
-import com.chen.sbbus.mapper.BusMapper;
 import com.chen.sbbus.mapper.DriverMapper;
 import com.chen.sbbus.service.DriverService;
 import com.chen.sbbus.utils.DriverInfo;
@@ -36,6 +38,29 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> implemen
     @Override
     public DriverInfo getDriverInfoByAccount(String account) {
         return driverMapper.getDriverByAccount(account);
+    }
+
+    @Override
+    public Integer insertDriver(Driver driver) {
+        return driverMapper.insertDriver(driver);
+    }
+
+    @Override
+    public Integer updateDriver(Driver driver) {
+        return driverMapper.updateDriver(driver);
+    }
+
+    @Override
+    public IPage<Driver> getDriverByPage(Integer currentPage, Integer pageSize, String name) {
+
+        IPage<Driver> page = new Page<>(currentPage,pageSize);
+        if (name==""){
+            return driverMapper.selectPage(page,null);
+        }
+        QueryWrapper<Driver> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("start",name);         //根据name模糊查询
+        queryWrapper.orderByAsc("id");         //根据id升序排序
+        return driverMapper.selectPage(page,queryWrapper);
     }
 
 }
