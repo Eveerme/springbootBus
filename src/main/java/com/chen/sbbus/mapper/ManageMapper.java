@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface ManageMapper extends BaseMapper<Manage> {
-    @Select("select * from user where account = #{account} and password = #{password}")
+    @Select("select * from db_manage where account = #{account} and password = #{password}")
     Manage getManagerByAP(@Param("account") String account,@Param("password") String password);
 
 }

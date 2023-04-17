@@ -24,4 +24,5 @@ public class Driver {
     private String address;
     private Date create_time;
     private String busId;
+    private int isOnline;
 }

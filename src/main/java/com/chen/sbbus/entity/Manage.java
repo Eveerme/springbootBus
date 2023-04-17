@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@TableName("user")
+@TableName("db_manage")
 public class Manage {
 
     /**

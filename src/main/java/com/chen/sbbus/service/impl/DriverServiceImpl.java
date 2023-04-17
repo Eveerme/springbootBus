@@ -58,7 +58,7 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> implemen
             return driverMapper.selectPage(page,null);
         }
         QueryWrapper<Driver> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("start",name);         //根据name模糊查询
+        queryWrapper.like("name",name);         //根据name模糊查询
         queryWrapper.orderByAsc("id");         //根据id升序排序
         return driverMapper.selectPage(page,queryWrapper);
     }
