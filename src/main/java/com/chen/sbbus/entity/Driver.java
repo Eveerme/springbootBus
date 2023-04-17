@@ -14,8 +14,8 @@ import java.sql.Date;
 @AllArgsConstructor
 @TableName("db_driver")
 public class Driver {
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+   // @TableId(type = IdType.AUTO)
+    private String id;
     private String account;
     private String password;
     private String name;

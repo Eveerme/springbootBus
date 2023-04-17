@@ -36,13 +36,13 @@ public class DriverController {
 
     //根据用户查询Id
     @GetMapping("/{id}")
-    public R getAllDriverById(@PathVariable("id") Integer id){
+    public R getAllDriverById(@PathVariable("id") String id){
         return new R(true,driverService.getById(id));
     }
 
     //根据Id删除用户
     @DeleteMapping("/delete/{id}")
-    public R deleteDriverById(@PathVariable Integer id){
+    public R deleteDriverById(@PathVariable String id){
         return new R(driverService.removeById(id));
     }
 
@@ -70,3 +70,8 @@ public class DriverController {
     }
 
 }
+
+/*
+*   lo:11.213 E_W:E //经度
+*   la:72.3  N_S:S//纬度
+* */

@@ -31,7 +31,7 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> implemen
     }
 
     @Override
-    public DriverInfo getDriverInfoById(Integer id) {
+    public DriverInfo getDriverInfoById(String id) {
         return driverMapper.getDriverById(id);
     }
 

@@ -17,10 +17,10 @@ public class BusController {
     //查询所有Bus
     @GetMapping
     public R getAllBus(){
-        return new R(true,busService.findAllBus());
+        return new R(true,busService.list());
     }
     @GetMapping("/{id}")
-    public R getBusById(@PathVariable("id") Integer id){
+    public R getBusById(@PathVariable("id") String id){
         return new R(true,busService.getBusById(id));
     }
 

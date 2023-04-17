@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 
 @TableName("db_station")
 public class Station {
-    @TableId(value="id",type= IdType.AUTO)//自增id
+//    @TableId(value="id",type= IdType.AUTO)//自增id
     Integer id;
     private String name;
-    private String longitude_h;//经度最高
-    private String longitude_l;//经度最低
-    private String latitude_h;  //纬度最高
-    private String latitude_l;//纬度最低
+    private Double longitude;//经度最高
+    private String E_W;//经度最低
+    private Double latitude;  //纬度最高
+    private String S_N;//纬度最低
 
 }

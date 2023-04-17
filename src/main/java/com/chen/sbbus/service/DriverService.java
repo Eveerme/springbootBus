@@ -10,7 +10,7 @@ import com.chen.sbbus.utils.DriverInfo;
 public interface DriverService extends IService<Driver> {
     Boolean login(String name, String password);
     String getDriverPasswordByAccount(String account);
-    DriverInfo getDriverInfoById(Integer id);
+    DriverInfo getDriverInfoById(String id);
 
     DriverInfo getDriverInfoByAccount(String account);
     Integer insertDriver(Driver driver);      //插入一条新的站点信息

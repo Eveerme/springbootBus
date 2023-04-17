@@ -11,5 +11,4 @@ public interface ManageMapper extends BaseMapper<Manage> {
     @Select("select * from user where account = #{account} and password = #{password}")
     Manage getManagerByAP(@Param("account") String account,@Param("password") String password);
 
-
 }

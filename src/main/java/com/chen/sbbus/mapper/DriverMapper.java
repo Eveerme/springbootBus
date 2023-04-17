@@ -11,15 +11,15 @@ import java.sql.Date;
 @Mapper
 public interface DriverMapper extends BaseMapper<Driver> {
     @Select("select * from db_driver where account=#{account} and password=#{password}")
-    Driver getDriverByAP(@Param("acco.unt") String account,@Param("password") String password);//根据账号密码查找司机
+    Driver getDriverByAP(@Param("account") String account,@Param("password") String password);//根据账号密码查找司机
     @Select("select password from db_driver where account=#{account}")
     String getDriverPasswordByAccount(@Param("account")String account);//根据账号查找密码
     @Select("SELECT id,account,name,sex,phone,address,create_time,bus_id from db_driver where id = #{id}")
-    DriverInfo getDriverById(@Param("id") Integer id);//根据id显示所有信息
+    DriverInfo getDriverById(@Param("id") String id);//根据id显示所有信息
     @Select("SELECT id,account,name,sex,phone,address,create_time,bus_id from db_driver where account = #{account}")
     DriverInfo getDriverByAccount(@Param("account") String account);//根据账号显示所有信息
     
-    @Insert("INSERT INTO db_driver(account,password,sex,phone,address,create_time,busId) VALUES(#{account},#{password},#{sex},#{phone},#{address},#{create_time},#{busId}")
+    @Insert("INSERT INTO db_driver(id,account,password,sex,phone,address,create_time,busId) VALUES(#{id},#{account},#{password},#{sex},#{phone},#{address},#{create_time},#{busId}")
     Integer insertDriver(Driver driver);//插入一条新的站点信息
 
     @Update("update db_driver set account=#{account}, password=#{password}, name=#{name}, sex=#{sex}, phone=#{phone} , address=#{address}, create_time=#{create_time},busId=#{busId} where id=#{id}")

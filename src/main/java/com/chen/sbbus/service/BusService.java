@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BusService extends IService<Bus> {
     List<Bus> findAllBus();
-    Bus getBusById(Integer id);
+    Bus getBusById(String id);
     Integer insertBus(Bus bus);
     Integer updateBus(Bus bus);
     IPage<Bus> getBusByPage(Integer currentPage, Integer pageSize);

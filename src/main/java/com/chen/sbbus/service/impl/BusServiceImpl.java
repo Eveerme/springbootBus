@@ -27,7 +27,7 @@ public class BusServiceImpl extends ServiceImpl<BusMapper, Bus> implements BusSe
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)    //读已提交
-    public Bus getBusById(Integer id) {//根据id查询司机信息
+    public Bus getBusById(String id) {//根据id查询司机信息
         return busMapper.getBusById(id);
     }
 

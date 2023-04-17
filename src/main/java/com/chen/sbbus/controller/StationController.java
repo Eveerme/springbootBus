@@ -14,6 +14,10 @@ public class StationController {
 
     @Autowired
     private StationService stationService;
+    @GetMapping
+    public R getAllStation(){
+        return new R(true,stationService.list());
+    }
     @PostMapping("/insert")
     public R insertStation(@RequestParam Station station){
         return new R(true,stationService.insertStation(station));
@@ -31,10 +35,7 @@ public class StationController {
     public R getStationById(@PathVariable String id){
         return new R(true,stationService.getById(id));
     }
-    @GetMapping("/getAll")
-    public R getAllStation(){
-        return new R(true,stationService.list());
-    }
+
 
     @GetMapping("/page")
     public R getAllSiteByPage(@RequestParam("currentPage")int currentPage,
