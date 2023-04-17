@@ -23,6 +23,7 @@ public class DriverController {
             //信息验证成功，返回部分用户信息
             String token = JWTUtils.getToken(request);
             DriverInfo driverInfo = driverService.getDriverInfoByAccount(account);
+
             return new LoginResponse(true,token, driverInfo);
         }
         else{
