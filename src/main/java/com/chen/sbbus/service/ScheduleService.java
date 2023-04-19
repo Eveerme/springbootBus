@@ -8,7 +8,7 @@ public interface ScheduleService extends IService<Schedule> {
     Integer insertSchedule(Schedule schedule);      //插入一条新的站点信息
     Integer updateSchedule(Schedule schedule);     //修改站点信息
 
-    Schedule selectBusIdByDriverId(Integer id);
+    Schedule selectScheduleByDriverId(Integer id);
 
     IPage<Schedule> getScheduleByPage(Integer currentPage, Integer pageSize);//分页查询
 }

@@ -42,7 +42,7 @@ public class DriverController {
             DriverInfo driverInfo = driverService.getDriverInfoByAccount(account);
             driverService.updateDriverIsOnline(driverInfo.getId(),1);
             //获取调度busId
-            Schedule schedule = scheduleService.selectBusIdByDriverId(driverInfo.getId());
+            Schedule schedule = scheduleService.selectScheduleByDriverId(driverInfo.getId());
             String busId = schedule.getBusId();
             //获取线路
             Routes route = routeService.getRoutesById(schedule.getRouteId());
@@ -77,7 +77,7 @@ public class DriverController {
     @GetMapping("/logout/{id}")
     public R logout(@PathVariable("id") Integer id){
         driverService.updateDriverIsOnline(id,0);
-        Schedule schedule = scheduleService.selectBusIdByDriverId(id);
+        Schedule schedule = scheduleService.selectScheduleByDriverId(id);
         String busId = schedule.getBusId();
         String topic = "/bus/"+busId+"/pub_topic";
         //退出登录后退订相关主题

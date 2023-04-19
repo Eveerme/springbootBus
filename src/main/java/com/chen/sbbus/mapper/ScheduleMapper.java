@@ -12,6 +12,6 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
     @Update("update db_schedule set bus_id=#{bus_id}, driver_id=#{driver_id}, route_id=#{route_id}, start_time=#{start_time}, end_time=#{end_time}, date=#{date} where id=#{id}")
     Integer updateSchedule(Schedule schedule);//修改站点信息
     @Select("select * from db_schedule where driver_id = #{id}")
-    Schedule selectBusIdByDriverId(@Param("id") Integer id);
+    Schedule selectScheduleByDriverId(@Param("id") Integer id);
 
 }

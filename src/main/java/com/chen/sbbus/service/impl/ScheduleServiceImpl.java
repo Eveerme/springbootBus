@@ -26,8 +26,8 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
     }
 
     @Override
-    public Schedule selectBusIdByDriverId(Integer id) {
-        return scheduleMapper.selectBusIdByDriverId(id);
+    public Schedule selectScheduleByDriverId(Integer id) {
+        return scheduleMapper.selectScheduleByDriverId(id);
     }
 
     @Override

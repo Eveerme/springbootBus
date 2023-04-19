@@ -1,21 +1,34 @@
 package com.chen.sbbus.controller;
 
+import com.chen.sbbus.entity.Routes;
 import com.chen.sbbus.entity.Schedule;
+import com.chen.sbbus.service.RouteService;
 import com.chen.sbbus.service.ScheduleService;
 import com.chen.sbbus.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/schedule")
 public class ScheduleController {
     @Autowired
     private ScheduleService scheduleService;
+    @Autowired
+    private RouteService routeService;
 
     //查询所有用户
     @GetMapping
     public R getAllSchedule(){
         return new R(true,scheduleService.list());
+    }
+
+    @GetMapping("/stationNum/{id}")
+    public R getStationNum(@PathVariable("id") Integer id){
+        Routes routes = routeService.getRoutesById(id);
+        List<String> stationList = routes.getStationsList();
+        return new R();
     }
 
     //根据用户查询Id
