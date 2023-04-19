@@ -31,6 +31,11 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station>imple
     }
 
     @Override
+    public Station getStationById(String id) {
+        return stationMapper.getStationById(id);
+    }
+
+    @Override
     public IPage<Station> getStationByPage(Integer currentPage, Integer pageSize, String name) {
         IPage<Station> page = new Page<>(currentPage,pageSize);
         if (name==""){

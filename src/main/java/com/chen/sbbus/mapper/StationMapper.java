@@ -16,6 +16,8 @@ public interface StationMapper extends BaseMapper<Station> {
 
     @Delete("delete from db_station where id =#{id}")
     Boolean deleteStationById(@Param("id") String id);//根据id删除站点数据
+    @Select("select * from db_station where id=#{id}")
+    Station getStationById(@Param("id") String id);//根据id获取站点
 
 
 }

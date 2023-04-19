@@ -1,18 +1,33 @@
 package com.chen.sbbus.controller;
 
 import com.chen.sbbus.entity.Driver;
+import com.chen.sbbus.entity.Route;
+import com.chen.sbbus.entity.Schedule;
 import com.chen.sbbus.service.DriverService;
+import com.chen.sbbus.service.RouteService;
+import com.chen.sbbus.service.ScheduleService;
+import com.chen.sbbus.service.StationService;
 import com.chen.sbbus.utils.*;
+import com.chen.sbbus.utils.MQTT.MQTTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/driver")
 public class DriverController {
     @Autowired
     private DriverService driverService;
+    @Autowired
+    private ScheduleService scheduleService;
+    @Autowired
+    private RouteService routeService;
+    @Autowired
+    private StationService stationService;
+    @Autowired
+    private MQTTUtils mqttUtils;
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request){
         // verify username and password, and return token and user info if valid
@@ -22,13 +37,114 @@ public class DriverController {
         if (driverService.login(account, password)){
             //信息验证成功，返回部分用户信息
             String token = JWTUtils.getToken(request);
+            // 更新登录状态
             DriverInfo driverInfo = driverService.getDriverInfoByAccount(account);
+            driverService.updateDriverIsOnline(driverInfo.getId(),1);
+            //获取调度busId
+            Schedule schedule = scheduleService.selectBusIdByDriverId(driverInfo.getId());
+            String busId = schedule.getBusId();
+            //获取线路
+            Route route = routeService.getById(schedule.getRouteId());
 
-            return new LoginResponse(true,token, driverInfo);
+            driverInfo.setBusId(busId);
+            //登录成功调用订阅mqtt相关服务
+            String topic = "/bus/"+busId+"/pub_topic";
+            mqttUtils.subscribeTopic(topic,2);
+            //获取线路
+            ScheduleInfo scheduleInfo = new ScheduleInfo();
+            scheduleInfo.setSchedule(schedule);
+            List<StationInfo> stationInfos = new ArrayList<>();
+            int num = 0;
+            if (route.getR1()!=null){
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(route.getR1());
+                stationInfo.setStationName(stationService.getStationById(route.getR1()).getName());
+                //设置起始车站
+                scheduleInfo.setStart(stationInfo.getStationName());
+                stationInfos.add(stationInfo);
+                num++;
+            }
+            if (route.getR2()!=null){
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(route.getR2());
+                stationInfo.setStationName(stationService.getStationById(route.getR2()).getName());
+                stationInfos.add(stationInfo);
+                num++;
+            }
+            if (route.getR3()!=null){
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(route.getR3());
+                stationInfo.setStationName(stationService.getStationById(route.getR3()).getName());
+                stationInfos.add(stationInfo);
+                num++;
+            }
+            if (route.getR4()!=null){
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(route.getR4());
+                stationInfo.setStationName(stationService.getStationById(route.getR4()).getName());
+                stationInfos.add(stationInfo);
+                num++;
+            }
+            if (route.getR5()!=null){
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(route.getR5());
+                stationInfo.setStationName(stationService.getStationById(route.getR5()).getName());
+                stationInfos.add(stationInfo);
+                num++;
+            }
+            if (route.getR6()!=null){
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(route.getR6());
+                stationInfo.setStationName(stationService.getStationById(route.getR6()).getName());
+                stationInfos.add(stationInfo);
+                num++;
+            }
+            if (route.getR7()!=null){
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(route.getR7());
+                stationInfo.setStationName(stationService.getStationById(route.getR7()).getName());
+                stationInfos.add(stationInfo);
+                num++;
+            }
+            if (route.getR8()!=null){
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(route.getR8());
+                stationInfo.setStationName(stationService.getStationById(route.getR8()).getName());
+                stationInfos.add(stationInfo);
+                num++;
+            }
+            if (route.getR9()!=null){
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(route.getR9());
+                stationInfo.setStationName(stationService.getStationById(route.getR9()).getName());
+                stationInfos.add(stationInfo);
+                num++;
+            }
+            if (route.getR10()!=null){
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(route.getR10());
+                stationInfo.setStationName(stationService.getStationById(route.getR10()).getName());
+                stationInfos.add(stationInfo);
+                num++;
+            }
+            scheduleInfo.setEnd(stationService.getStationById(route.getEnd()).getName());
+            scheduleInfo.setStationInfos(stationInfos);
+            scheduleInfo.setStationNum(num);
+            return new LoginResponse(true,token, driverInfo,scheduleInfo);
         }
         else{
-            return new LoginResponse(false,null,null);
+            return new LoginResponse(false,null,null,null);
         }
+    }
+    @GetMapping("/logout/{id}")
+    public R logout(@PathVariable("id") Integer id){
+        driverService.updateDriverIsOnline(id,0);
+        Schedule schedule = scheduleService.selectBusIdByDriverId(id);
+        String busId = schedule.getBusId();
+        String topic = "/bus/"+busId+"/pub_topic";
+        //退出登录后退订相关主题
+        mqttUtils.unSubscribeTopic(topic);
+        return new R(true);
     }
     @GetMapping
     public R getAllDriver(){
@@ -42,8 +158,8 @@ public class DriverController {
     }
 
     //根据Id删除用户
-    @DeleteMapping("/delete/{id}")
-    public R deleteDriverById(@PathVariable String id){
+    @GetMapping("/delete")
+    public R deleteDriverById(@RequestParam("id") Integer id){
         return new R(driverService.removeById(id));
     }
 
@@ -71,8 +187,3 @@ public class DriverController {
     }
 
 }
-
-/*
-*   lo:11.213 E_W:E //经度
-*   la:72.3  N_S:S//纬度
-* */

@@ -11,6 +11,8 @@ import com.chen.sbbus.utils.DriverInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> implements DriverService {
     @Autowired
@@ -51,6 +53,16 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> implemen
     }
 
     @Override
+    public Integer updateDriverIsOnline(Integer id, int i) {
+        return driverMapper.updateDriverIsOnline(id, i);
+    }
+
+    @Override
+    public List<Driver> selectDriverOnline() {
+        return driverMapper.selectDriverOnline();
+    }
+
+    @Override
     public IPage<Driver> getDriverByPage(Integer currentPage, Integer pageSize, String name) {
 
         IPage<Driver> page = new Page<>(currentPage,pageSize);
@@ -58,7 +70,7 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> implemen
             return driverMapper.selectPage(page,null);
         }
         QueryWrapper<Driver> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("start",name);         //根据name模糊查询
+        queryWrapper.like("name",name);         //根据name模糊查询
         queryWrapper.orderByAsc("id");         //根据id升序排序
         return driverMapper.selectPage(page,queryWrapper);
     }

@@ -1,6 +1,7 @@
 package com.chen.sbbus.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -17,8 +18,10 @@ public class Station {
     Integer id;
     private String name;
     private Double longitude;//经度最高
+    @TableField("E_W")
     private String E_W;//经度最低
     private Double latitude;  //纬度最高
+    @TableField("S_N")
     private String S_N;//纬度最低
 
 }

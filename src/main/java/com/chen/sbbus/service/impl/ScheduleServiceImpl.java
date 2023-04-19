@@ -26,6 +26,11 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
     }
 
     @Override
+    public Schedule selectBusIdByDriverId(Integer id) {
+        return scheduleMapper.selectBusIdByDriverId(id);
+    }
+
+    @Override
     public IPage<Schedule> getScheduleByPage(Integer currentPage, Integer pageSize) {
         IPage<Schedule> page = new Page<>(currentPage,pageSize);
 

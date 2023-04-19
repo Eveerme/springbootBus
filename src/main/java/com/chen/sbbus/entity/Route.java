@@ -22,5 +22,9 @@ public class Route {
     private String r3;
     private String r4;
     private String r5;
-
+    private String r6;
+    private String r7;
+    private String r8;
+    private String r9;
+    private String r10;
 }
