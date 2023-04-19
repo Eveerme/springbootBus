@@ -19,7 +19,7 @@ public interface DriverMapper extends BaseMapper<Driver> {
     @Select("SELECT id,account,name,sex,phone,address,create_time from db_driver where account = #{account}")
     DriverInfo getDriverByAccount(@Param("account") String account);//根据账号显示所有信息
 
-    @Insert("INSERT INTO db_driver(id,account,password,sex,phone,address,create_time) VALUES(#{id},#{account},#{password},#{sex},#{phone},#{address},#{create_time})")
+    @Insert("INSERT INTO db_driver(account,password,name,sex,phone,address) VALUES(#{account},#{password},#{name},#{sex},#{phone},#{address})")
     Integer insertDriver(Driver driver);//插入一条新的站点信息
 
     @Update("update db_driver set account=#{account}, password=#{password}, name=#{name}, sex=#{sex}, phone=#{phone} , address=#{address}, create_time=#{create_time} where id=#{id}")
