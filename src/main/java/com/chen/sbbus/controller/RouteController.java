@@ -1,11 +1,12 @@
 package com.chen.sbbus.controller;
 
-import com.chen.sbbus.entity.Route;
+import com.chen.sbbus.entity.Routes;
 import com.chen.sbbus.service.RouteService;
 import com.chen.sbbus.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,7 +24,8 @@ public class RouteController {
     //根据用户查询Id
     @GetMapping("/{id}")
     public R getAllRouteById(@PathVariable("id") Integer id){
-        return new R(true,routeService.getById(id));
+        Routes routes = routeService.getRoutesById(id);
+        return new R(true,routes);
     }
 
     //根据Id删除用户
@@ -34,12 +36,12 @@ public class RouteController {
 
     //新增用户
     @PostMapping("/insert")
-    public R insertRoute(@RequestBody Route route){
+    public R insertRoute(@RequestBody Routes route){
         return new R(routeService.insertRoute(route));
     }
     //新更新用户
     @PostMapping("/update")
-    public R updateRoute(@RequestBody Route route){
+    public R updateRoute(@RequestBody Routes route){
         return new R(routeService.updateRoute(route));
     }
 
@@ -53,4 +55,5 @@ public class RouteController {
                                @RequestParam("name")String name){
         return new R(true,routeService.getRouteByPage(currentPage, pageSize,name));
     }
+
 }

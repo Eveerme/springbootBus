@@ -1,7 +1,6 @@
 package com.chen.sbbus.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.chen.sbbus.entity.Route;
 import com.chen.sbbus.entity.Schedule;
 import org.apache.ibatis.annotations.*;
 

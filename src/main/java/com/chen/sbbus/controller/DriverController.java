@@ -1,8 +1,9 @@
 package com.chen.sbbus.controller;
 
 import com.chen.sbbus.entity.Driver;
-import com.chen.sbbus.entity.Route;
+import com.chen.sbbus.entity.Routes;
 import com.chen.sbbus.entity.Schedule;
+import com.chen.sbbus.entity.Station;
 import com.chen.sbbus.service.DriverService;
 import com.chen.sbbus.service.RouteService;
 import com.chen.sbbus.service.ScheduleService;
@@ -44,92 +45,29 @@ public class DriverController {
             Schedule schedule = scheduleService.selectBusIdByDriverId(driverInfo.getId());
             String busId = schedule.getBusId();
             //获取线路
-            Route route = routeService.getById(schedule.getRouteId());
+            Routes route = routeService.getRoutesById(schedule.getRouteId());
+            List<String> stations = route.getStationsList();
+
 
             driverInfo.setBusId(busId);
             //登录成功调用订阅mqtt相关服务
             String topic = "/bus/"+busId+"/pub_topic";
             mqttUtils.subscribeTopic(topic,2);
-            //获取线路
+
             ScheduleInfo scheduleInfo = new ScheduleInfo();
-            scheduleInfo.setSchedule(schedule);
+            //把线路信息写入到scheduleInfo中
             List<StationInfo> stationInfos = new ArrayList<>();
-            int num = 0;
-            if (route.getR1()!=null){
+            for (String stationsId:stations){
                 StationInfo stationInfo = new StationInfo();
-                stationInfo.setStationId(route.getR1());
-                stationInfo.setStationName(stationService.getStationById(route.getR1()).getName());
-                //设置起始车站
-                scheduleInfo.setStart(stationInfo.getStationName());
+                stationInfo.setStationId(stationsId);
+                Station station = stationService.getStationById(stationsId);
+                stationInfo.setStationName(station.getName());
                 stationInfos.add(stationInfo);
-                num++;
             }
-            if (route.getR2()!=null){
-                StationInfo stationInfo = new StationInfo();
-                stationInfo.setStationId(route.getR2());
-                stationInfo.setStationName(stationService.getStationById(route.getR2()).getName());
-                stationInfos.add(stationInfo);
-                num++;
-            }
-            if (route.getR3()!=null){
-                StationInfo stationInfo = new StationInfo();
-                stationInfo.setStationId(route.getR3());
-                stationInfo.setStationName(stationService.getStationById(route.getR3()).getName());
-                stationInfos.add(stationInfo);
-                num++;
-            }
-            if (route.getR4()!=null){
-                StationInfo stationInfo = new StationInfo();
-                stationInfo.setStationId(route.getR4());
-                stationInfo.setStationName(stationService.getStationById(route.getR4()).getName());
-                stationInfos.add(stationInfo);
-                num++;
-            }
-            if (route.getR5()!=null){
-                StationInfo stationInfo = new StationInfo();
-                stationInfo.setStationId(route.getR5());
-                stationInfo.setStationName(stationService.getStationById(route.getR5()).getName());
-                stationInfos.add(stationInfo);
-                num++;
-            }
-            if (route.getR6()!=null){
-                StationInfo stationInfo = new StationInfo();
-                stationInfo.setStationId(route.getR6());
-                stationInfo.setStationName(stationService.getStationById(route.getR6()).getName());
-                stationInfos.add(stationInfo);
-                num++;
-            }
-            if (route.getR7()!=null){
-                StationInfo stationInfo = new StationInfo();
-                stationInfo.setStationId(route.getR7());
-                stationInfo.setStationName(stationService.getStationById(route.getR7()).getName());
-                stationInfos.add(stationInfo);
-                num++;
-            }
-            if (route.getR8()!=null){
-                StationInfo stationInfo = new StationInfo();
-                stationInfo.setStationId(route.getR8());
-                stationInfo.setStationName(stationService.getStationById(route.getR8()).getName());
-                stationInfos.add(stationInfo);
-                num++;
-            }
-            if (route.getR9()!=null){
-                StationInfo stationInfo = new StationInfo();
-                stationInfo.setStationId(route.getR9());
-                stationInfo.setStationName(stationService.getStationById(route.getR9()).getName());
-                stationInfos.add(stationInfo);
-                num++;
-            }
-            if (route.getR10()!=null){
-                StationInfo stationInfo = new StationInfo();
-                stationInfo.setStationId(route.getR10());
-                stationInfo.setStationName(stationService.getStationById(route.getR10()).getName());
-                stationInfos.add(stationInfo);
-                num++;
-            }
-            scheduleInfo.setEnd(stationService.getStationById(route.getEnd()).getName());
+            scheduleInfo.setSchedule(schedule);
+
             scheduleInfo.setStationInfos(stationInfos);
-            scheduleInfo.setStationNum(num);
+            scheduleInfo.setStationNum(stations.size());
             return new LoginResponse(true,token, driverInfo,scheduleInfo);
         }
         else{

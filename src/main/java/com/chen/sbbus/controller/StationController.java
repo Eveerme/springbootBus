@@ -33,7 +33,8 @@ public class StationController {
     }
     @GetMapping("/get/{id}")
     public R getStationById(@PathVariable String id){
-        return new R(true,stationService.getById(id));
+        Station station = stationService.getStationById(id);
+        return new R(true,station);
     }
 
 

@@ -2,7 +2,6 @@ package com.chen.sbbus.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.chen.sbbus.entity.Route;
 import com.chen.sbbus.entity.Schedule;
 
 public interface ScheduleService extends IService<Schedule> {
