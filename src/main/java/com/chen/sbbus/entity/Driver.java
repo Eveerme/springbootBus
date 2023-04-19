@@ -1,6 +1,7 @@
 package com.chen.sbbus.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import java.sql.Date;
 @AllArgsConstructor
 @TableName("db_driver")
 public class Driver {
-   // @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.AUTO)
     private String id;
     private String account;
     private String password;
@@ -23,6 +24,6 @@ public class Driver {
     private String phone;
     private String address;
     private Date create_time;
-    private String busId;
-    private int isOnline;
+    @TableField("isOnline")
+    private Integer isOnline;
 }

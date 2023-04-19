@@ -23,6 +23,7 @@ public class DriverController {
             //信息验证成功，返回部分用户信息
             String token = JWTUtils.getToken(request);
             DriverInfo driverInfo = driverService.getDriverInfoByAccount(account);
+
             return new LoginResponse(true,token, driverInfo);
         }
         else{
@@ -41,8 +42,8 @@ public class DriverController {
     }
 
     //根据Id删除用户
-    @DeleteMapping("/delete/{id}")
-    public R deleteDriverById(@PathVariable String id){
+    @GetMapping("/delete")
+    public R deleteDriverById(@RequestParam("id") Integer id){
         return new R(driverService.removeById(id));
     }
 
