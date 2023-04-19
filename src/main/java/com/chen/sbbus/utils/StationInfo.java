@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
-    private Boolean status;
-    private String token;
-    private DriverInfo driverInfo;
-    private ScheduleInfo scheduleInfo;
+public class StationInfo {
+    String stationId;
+    String stationName;
 }

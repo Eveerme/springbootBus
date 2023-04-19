@@ -11,6 +11,8 @@ import com.chen.sbbus.utils.DriverInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> implements DriverService {
     @Autowired
@@ -48,6 +50,16 @@ public class DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> implemen
     @Override
     public Integer updateDriver(Driver driver) {
         return driverMapper.updateDriver(driver);
+    }
+
+    @Override
+    public Integer updateDriverIsOnline(Integer id, int i) {
+        return driverMapper.updateDriverIsOnline(id, i);
+    }
+
+    @Override
+    public List<Driver> selectDriverOnline() {
+        return driverMapper.selectDriverOnline();
     }
 
     @Override

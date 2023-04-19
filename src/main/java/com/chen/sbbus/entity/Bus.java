@@ -16,7 +16,7 @@ public class Bus {
     private String busTemp;
     private String busHum;
     private String busAir;
-    private Boolean busBeep;
+    private Integer busBeep;
     private float busLatitude;
     private String busNS;
     private float busLongitude;

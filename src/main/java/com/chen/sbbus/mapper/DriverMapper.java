@@ -7,6 +7,7 @@ import com.chen.sbbus.utils.DriverInfo;
 import org.apache.ibatis.annotations.*;
 
 import java.sql.Date;
+import java.util.List;
 
 @Mapper
 public interface DriverMapper extends BaseMapper<Driver> {
@@ -19,10 +20,16 @@ public interface DriverMapper extends BaseMapper<Driver> {
     @Select("SELECT id,account,name,sex,phone,address,create_time from db_driver where account = #{account}")
     DriverInfo getDriverByAccount(@Param("account") String account);//根据账号显示所有信息
 
-    @Insert("INSERT INTO db_driver(account,password,name,sex,phone,address) VALUES(#{account},#{password},#{name},#{sex},#{phone},#{address})")
+    @Insert("INSERT INTO db_driver(id,account,password,name,sex,phone,address,create_time) VALUES(#{id},#{account},#{password},#{sex},#{phone},#{address},#{create_time})")
     Integer insertDriver(Driver driver);//插入一条新的站点信息
 
     @Update("update db_driver set account=#{account}, password=#{password}, name=#{name}, sex=#{sex}, phone=#{phone} , address=#{address}, create_time=#{create_time} where id=#{id}")
     Integer updateDriver(Driver driver);//修改站点信息
+
+    @Update("update db_driver set is_online=#{i} where id = #{id}")
+    Integer updateDriverIsOnline(@Param("id")Integer id,@Param("i")int i);//修改在线状态
+
+    @Select("select * from db_driver where is_online=1")
+    List<Driver> selectDriverOnline();
 
 }

@@ -14,12 +14,14 @@ import lombok.NoArgsConstructor;
 public class Schedule {
     @TableId(value="id",type= IdType.AUTO)//自增id
     private Integer id;
-    private String bus_id;
-    private String driver_id;
-    private String route_id;
-    private String start_time;
-    private String end_time;
-    private String date;
+    private String busId;
+    private Integer driverId;
+    private Integer routeId;
+    private String startTime;
+    private String dTime;
+    private Integer direction;
+    private Integer isOnStation;
+    private String nowStationId;
 }
 
 
