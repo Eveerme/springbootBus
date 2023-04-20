@@ -7,15 +7,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("db_warn")
-public class Warn {
+@TableName("db_history")
+public class History {
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
     private Integer scheduleId;
-    private String msg;
-    private Integer isSolve;
+    private String sTime;
+    private String eTime;
+    private Integer isFinish;
 }

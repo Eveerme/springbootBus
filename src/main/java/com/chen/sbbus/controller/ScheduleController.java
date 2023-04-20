@@ -1,8 +1,10 @@
 package com.chen.sbbus.controller;
 
+import com.chen.sbbus.entity.History;
 import com.chen.sbbus.entity.Routes;
 import com.chen.sbbus.entity.Schedule;
 import com.chen.sbbus.entity.Warn;
+import com.chen.sbbus.service.HistoryService;
 import com.chen.sbbus.service.RouteService;
 import com.chen.sbbus.service.ScheduleService;
 import com.chen.sbbus.service.WarnService;
@@ -25,6 +27,8 @@ public class ScheduleController {
     private RouteService routeService;
     @Autowired
     private WarnService warnService;
+    @Autowired
+    private HistoryService historyService;
 
     //查询所有用户
     @GetMapping
@@ -89,39 +93,46 @@ public class ScheduleController {
             if (sTime <= nTime){
                 //登录时间比发车时间晚
                 if (sTime + dTime < nTime){
-                    //在发车时间内
+                    //在发车时间内，正常发车
+                    //返回司机调度
+                    sc = schedule;
+                    History history = new History();
+                    history.setScheduleId(schedule.getId());
+                    history.setSTime(formatter.format(date));
+                    historyService.insertHistory(history);
+                    break;
 
                 }else {
                     //不在发车时间内
-                    //当前找到的该司机最早的调度记录未超时,此时司机使用该调度表的记录
-                    //记录到警告表中,msg：发车时间延后，发车时间为yyyy-MM-dd HH:mm
+                    //当前找到的该司机最早的调度记录已超时,此时系统判断下一条调度表的记录
+                    //记录到警告表中,msg：发车时间超时，且未完成该调度
                     Warn warn = new Warn();
                     warn.setScheduleId(schedule.getId());
-                    warn.setMsg("发车时间延后，发车时间为:" + formatter.format(date));
+                    warn.setMsg("发车时间超时，且未完成该调度");
                     warnService.insertWarn(warn);
-                    //返回司机调度
-                    sc = schedule;
-                    break;
+                    scheduleService.setIsDone(schedule.getId());
+                    //插入到历史记录表中
+                    History history = new History();
+                    history.setScheduleId(schedule.getId());
+                    historyService.insertHistoryAll(history);
                 }
 
             }else {
-
-            }
-
-
-            if (sTime + dTime > nTime){
-
-            }
-            else {
-                //当前找到的该司机最早的调度记录已超时,此时系统判断下一条调度表的记录
-                //记录到警告表中,msg：发车时间超时，且未完成该调度
+                //登录时间比发车时间早
+                //返回司机调度
+                sc = schedule;
+                History history = new History();
+                history.setScheduleId(schedule.getId());
+                history.setSTime(formatter.format(date));
+                historyService.insertHistory(history);
+                //记录到警告表中,msg：发车时间过早，时间
                 Warn warn = new Warn();
                 warn.setScheduleId(schedule.getId());
-                warn.setMsg("发车时间超时，且未完成该调度");
+                warn.setMsg("发车时间过早,时间：" + formatter.format(date));
                 warnService.insertWarn(warn);
-                scheduleService.setIsDone(schedule.getId());
-
+                break;
             }
+
         }
         return new R(true,sc);
     }
