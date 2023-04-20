@@ -2,12 +2,18 @@ package com.chen.sbbus.controller;
 
 import com.chen.sbbus.entity.Routes;
 import com.chen.sbbus.entity.Schedule;
+import com.chen.sbbus.entity.Warn;
 import com.chen.sbbus.service.RouteService;
 import com.chen.sbbus.service.ScheduleService;
+import com.chen.sbbus.service.WarnService;
 import com.chen.sbbus.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @RestController
@@ -17,6 +23,8 @@ public class ScheduleController {
     private ScheduleService scheduleService;
     @Autowired
     private RouteService routeService;
+    @Autowired
+    private WarnService warnService;
 
     //查询所有用户
     @GetMapping
@@ -39,7 +47,7 @@ public class ScheduleController {
 
     //根据Id删除用户
     @DeleteMapping("/delete/{id}")
-    public R deleteScheduleById(@PathVariable Integer id){
+    public R deleteScheduleById(@PathVariable("id") Integer id){
         return new R(scheduleService.removeById(id));
     }
 
@@ -62,6 +70,60 @@ public class ScheduleController {
     public R getAllScheduleByPage(@RequestParam("currentPage")int currentPage,
                                @RequestParam("pageSize")int pageSize){
         return new R(true,scheduleService.getScheduleByPage(currentPage, pageSize));
+    }
+
+    @GetMapping("/test/{did}")
+    public R testSchedule(@PathVariable("did") Integer did){
+        //获取系统时间
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = new Date(System.currentTimeMillis());
+        System.out.println(formatter.format(date));
+        GregorianCalendar calendar = new GregorianCalendar();
+        //int nTime = calendar.get(Calendar.HOUR_OF_DAY);
+        int nTime = 9;
+        List<Schedule> scheduleList = scheduleService.getScheduleListByDriverId(did);
+        Schedule sc = new Schedule();
+        for (Schedule schedule:scheduleList){
+            int sTime = schedule.getStartTime();
+            int dTime = schedule.getDTime();
+            if (sTime <= nTime){
+                //登录时间比发车时间晚
+                if (sTime + dTime < nTime){
+                    //在发车时间内
+
+                }else {
+                    //不在发车时间内
+                    //当前找到的该司机最早的调度记录未超时,此时司机使用该调度表的记录
+                    //记录到警告表中,msg：发车时间延后，发车时间为yyyy-MM-dd HH:mm
+                    Warn warn = new Warn();
+                    warn.setScheduleId(schedule.getId());
+                    warn.setMsg("发车时间延后，发车时间为:" + formatter.format(date));
+                    warnService.insertWarn(warn);
+                    //返回司机调度
+                    sc = schedule;
+                    break;
+                }
+
+            }else {
+
+            }
+
+
+            if (sTime + dTime > nTime){
+
+            }
+            else {
+                //当前找到的该司机最早的调度记录已超时,此时系统判断下一条调度表的记录
+                //记录到警告表中,msg：发车时间超时，且未完成该调度
+                Warn warn = new Warn();
+                warn.setScheduleId(schedule.getId());
+                warn.setMsg("发车时间超时，且未完成该调度");
+                warnService.insertWarn(warn);
+                scheduleService.setIsDone(schedule.getId());
+
+            }
+        }
+        return new R(true,sc);
     }
 
 }

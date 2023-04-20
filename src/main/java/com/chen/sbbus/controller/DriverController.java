@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @RestController
@@ -41,7 +43,15 @@ public class DriverController {
             // 更新登录状态
             DriverInfo driverInfo = driverService.getDriverInfoByAccount(account);
             driverService.updateDriverIsOnline(driverInfo.getId(),1);
+            //获取系统时间
+            GregorianCalendar calendar = new GregorianCalendar();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
             //获取调度busId
+//            List<Schedule> scheduleList = scheduleService.getScheduleListByDriverId(driverInfo.getId());
+//            for (Schedule schedule:scheduleList){
+//                int sTime = schedule.getStartTime();
+//                int dTime = schedule.getDTime();
+//            }
             Schedule schedule = scheduleService.selectScheduleByDriverId(driverInfo.getId());
             String busId = schedule.getBusId();
             //获取线路

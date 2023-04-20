@@ -21,10 +21,10 @@ public interface DriverMapper extends BaseMapper<Driver> {
     DriverInfo getDriverByAccount(@Param("account") String account);//根据账号显示所有信息
 
     @Insert("INSERT INTO db_driver(id,account,password,name,sex,phone,address,create_time) VALUES(#{id},#{account},#{password},#{sex},#{phone},#{address},#{create_time})")
-    Integer insertDriver(Driver driver);//插入一条新的站点信息
+    Integer insertDriver(Driver driver);//插入一条新的信息
 
     @Update("update db_driver set account=#{account}, password=#{password}, name=#{name}, sex=#{sex}, phone=#{phone} , address=#{address}, create_time=#{create_time} where id=#{id}")
-    Integer updateDriver(Driver driver);//修改站点信息
+    Integer updateDriver(Driver driver);//修改信息
 
     @Update("update db_driver set is_online=#{i} where id = #{id}")
     Integer updateDriverIsOnline(@Param("id")Integer id,@Param("i")int i);//修改在线状态
