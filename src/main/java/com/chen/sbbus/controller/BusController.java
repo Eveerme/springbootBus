@@ -24,7 +24,7 @@ public class BusController {
         return new R(true,busService.getBusById(id));
     }
 
-    @PutMapping("/insert")
+    @PostMapping("/insert")
     public R insertBusInfo(@RequestBody Bus bus){//插入新的bus信息
 
         return new R(true,busService.insertBus(bus));
@@ -35,8 +35,8 @@ public class BusController {
         busService.updateBus(bus);
         return new R(true);
     }
-    @DeleteMapping("/delete/{id}")
-    public R deleteBusById(@PathVariable String id){
+    @GetMapping("/delete")
+    public R deleteBusById(@RequestParam("id") String id){
         return new R(busService.deleteBusById(id));
     }
 
