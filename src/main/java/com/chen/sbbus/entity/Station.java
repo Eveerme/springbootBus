@@ -14,8 +14,7 @@ import lombok.NoArgsConstructor;
 
 @TableName("db_station")
 public class Station {
-//    @TableId(value="id",type= IdType.AUTO)//自增id
-    Integer id;
+    private String id;
     private String name;
     private float longitude;//经度最高
     @TableField("E_W")

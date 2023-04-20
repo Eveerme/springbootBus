@@ -17,11 +17,11 @@ public class Schedule {
     private String busId;
     private Integer driverId;
     private Integer routeId;
-    private String startTime;
-    private String dTime;
+    private Integer startTime;
+    private Integer dTime;
     private Integer direction;
-    private Integer isOnStation;
-    private String nowStationId;
+    private Integer isDone;
+    private String nextStationId;
 }
 
 

@@ -29,6 +29,7 @@ public class ManagerController {
 
     @PostMapping("/login")
     public R login(@RequestBody ManagerLoginRequest request){
+
         String account = request.getAccount();
         String password = request.getPassword();
         if(manage.login(account,password)!=null){
@@ -36,7 +37,7 @@ public class ManagerController {
             //登录成功后订阅相关的主题
             List<Driver> driverList = driverService.selectDriverOnline();
             for (Driver driver:driverList){
-                Schedule schedule = scheduleService.selectBusIdByDriverId(driver.getId());
+                Schedule schedule = scheduleService.selectScheduleByDriverId(driver.getId());
                 String busId = schedule.getBusId();
                 String topic = "/bus/"+busId+"/pub_topic";
                 mqttUtils.subscribeTopic(topic, 2);
@@ -47,20 +48,6 @@ public class ManagerController {
         else{
             return new R(false);
         }
-    }
-
-    @GetMapping("/test")
-    public R testAll(){
-        //登录成功后订阅相关的主题
-        List<Driver> driverList = driverService.selectDriverOnline();
-        for (Driver driver:driverList){
-            Schedule schedule = scheduleService.selectBusIdByDriverId(driver.getId());
-            String busId = schedule.getBusId();
-            String topic = "/bus/"+busId+"/pub_topic";
-            mqttUtils.subscribeTopic(topic, 2);
-            System.out.println("订阅主题:"+topic);
-        }
-        return new R(true);
     }
 
 }

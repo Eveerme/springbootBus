@@ -13,7 +13,7 @@ import java.util.List;
 public class ScheduleInfo {
     Schedule schedule;
     List<StationInfo> StationInfos;
-    int stationNum;
-    String start;
-    String end;
+    int stationNum; //站点总数量
+    String start;   //起始站点名称
+    String end;     //结束站点名称
 }

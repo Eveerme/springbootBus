@@ -11,7 +11,10 @@ import com.chen.sbbus.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
+
 public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> implements ScheduleService {
     @Autowired
     ScheduleMapper scheduleMapper;
@@ -26,8 +29,18 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
     }
 
     @Override
-    public Schedule selectBusIdByDriverId(Integer id) {
-        return scheduleMapper.selectBusIdByDriverId(id);
+    public Integer setIsDone(Integer id) {
+        return scheduleMapper.setIsDone(id);
+    }
+
+    @Override
+    public Schedule selectScheduleByDriverId(Integer id) {
+        return scheduleMapper.selectScheduleByDriverId(id);
+    }
+
+    @Override
+    public List<Schedule> getScheduleListByDriverId(Integer id) {
+        return scheduleMapper.getScheduleListByDriverId(id);
     }
 
     @Override

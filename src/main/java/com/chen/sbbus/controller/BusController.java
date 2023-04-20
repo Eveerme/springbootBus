@@ -17,7 +17,7 @@ public class BusController {
     //查询所有Bus
     @GetMapping
     public R getAllBus(){
-        return new R(true,busService.findAllBus());
+        return new R(true,busService.list());
     }
     @GetMapping("/{id}")
     public R getBusById(@PathVariable("id") String id){
@@ -26,7 +26,6 @@ public class BusController {
 
     @PostMapping("/insert")
     public R insertBusInfo(@RequestBody Bus bus){//插入新的bus信息
-
         return new R(true,busService.insertBus(bus));
     }
     //根据id更新bus信息
