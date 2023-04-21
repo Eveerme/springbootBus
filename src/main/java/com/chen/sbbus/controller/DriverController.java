@@ -47,7 +47,7 @@ public class DriverController {
             System.out.println(formatter.format(date));
             GregorianCalendar calendar = new GregorianCalendar();
             //int nTime = calendar.get(Calendar.HOUR_OF_DAY);
-            int nTime = 9;
+            int nTime = 8;
             List<Schedule> scheduleList = scheduleService.getScheduleListByDriverId(driverInfo.getId());
             Schedule sc = new Schedule();
             Integer historyId=0;
@@ -127,7 +127,8 @@ public class DriverController {
                 stationInfos.add(stationInfo);
             }
             scheduleInfo.setSchedule(sc);
-
+            scheduleInfo.setStart(stationInfos.get(0).getStationName());
+            scheduleInfo.setEnd(stationInfos.get(stationInfos.size()-1).getStationName());
             scheduleInfo.setStationInfos(stationInfos);
             scheduleInfo.setStationNum(stations.size());
             scheduleInfo.setHistoryId(historyId);
@@ -137,11 +138,15 @@ public class DriverController {
             return new LoginResponse(false,null,null,null);
         }
     }
+    /*
+    * id:调度表的id
+    * hid:历史表的id
+    * */
     @GetMapping("/logout/{id}/{hId}")
     public R logout(@PathVariable("id") Integer id,@PathVariable("hId") Integer hId){
-        //设置离线
-        driverService.updateDriverIsOnline(id,0);
         Schedule schedule = scheduleService.getById(id);
+        //设置离线状态
+        driverService.updateDriverIsOnline(schedule.getDriverId(),0);
         String busId = schedule.getBusId();
         String topic = "/bus/"+busId+"/pub_topic";
         //退出登录后退订相关主题
