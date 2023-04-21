@@ -22,6 +22,7 @@ public class Schedule {
     private Integer direction;
     private Integer isDone;
     private String nextStationId;
+    private Integer flag;
 }
 
 
