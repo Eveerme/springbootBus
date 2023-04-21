@@ -84,7 +84,7 @@ public class ScheduleController {
         System.out.println(formatter.format(date));
         GregorianCalendar calendar = new GregorianCalendar();
         //int nTime = calendar.get(Calendar.HOUR_OF_DAY);
-        int nTime = 9;
+        int nTime = 8;
         List<Schedule> scheduleList = scheduleService.getScheduleListByDriverId(did);
         Schedule sc = new Schedule();
         for (Schedule schedule:scheduleList){
@@ -92,14 +92,16 @@ public class ScheduleController {
             int dTime = schedule.getDTime();
             if (sTime <= nTime){
                 //登录时间比发车时间晚
-                if (sTime + dTime < nTime){
+                if (sTime + dTime > nTime){
                     //在发车时间内，正常发车
                     //返回司机调度
                     sc = schedule;
                     History history = new History();
                     history.setScheduleId(schedule.getId());
                     history.setSTime(formatter.format(date));
+                    history.setCTime(formatter.format(date));
                     historyService.insertHistory(history);
+                    scheduleService.setIsDone(schedule.getId());
                     break;
 
                 }else {
@@ -114,6 +116,7 @@ public class ScheduleController {
                     //插入到历史记录表中
                     History history = new History();
                     history.setScheduleId(schedule.getId());
+                    history.setCTime(formatter.format(date));
                     historyService.insertHistoryAll(history);
                 }
 
@@ -124,6 +127,7 @@ public class ScheduleController {
                 History history = new History();
                 history.setScheduleId(schedule.getId());
                 history.setSTime(formatter.format(date));
+                history.setCTime(formatter.format(date));
                 historyService.insertHistory(history);
                 //记录到警告表中,msg：发车时间过早，时间
                 Warn warn = new Warn();

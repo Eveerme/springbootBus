@@ -16,4 +16,5 @@ public class ScheduleInfo {
     int stationNum; //站点总数量
     String start;   //起始站点名称
     String end;     //结束站点名称
+    Integer historyId;//记录表的id
 }

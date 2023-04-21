@@ -22,7 +22,7 @@ public class HistoryServiceImpl extends ServiceImpl<HistoryMapper, History> impl
     }
 
     @Override
-    public Integer updateHistoryById(String id, String eTime) {
+    public Integer updateHistoryById(Integer id, String eTime) {
         return historyMapper.updateHistoryById(id, eTime);
     }
 }

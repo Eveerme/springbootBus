@@ -18,4 +18,5 @@ public class History {
     private String sTime;
     private String eTime;
     private Integer isFinish;
+    private String cTime;
 }
