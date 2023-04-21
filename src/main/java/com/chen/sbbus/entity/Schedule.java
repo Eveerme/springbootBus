@@ -20,6 +20,7 @@ public class Schedule {
     private Integer startTime;
     private Integer dTime;
     private Integer direction;
+    private Integer isOnStation;
     private Integer isDone;
     private String nextStationId;
 }

@@ -4,11 +4,9 @@ import com.chen.sbbus.entity.History;
 import com.chen.sbbus.entity.Routes;
 import com.chen.sbbus.entity.Schedule;
 import com.chen.sbbus.entity.Warn;
-import com.chen.sbbus.service.HistoryService;
-import com.chen.sbbus.service.RouteService;
-import com.chen.sbbus.service.ScheduleService;
-import com.chen.sbbus.service.WarnService;
+import com.chen.sbbus.service.*;
 import com.chen.sbbus.utils.R;
+import com.chen.sbbus.utils.StationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +27,8 @@ public class ScheduleController {
     private WarnService warnService;
     @Autowired
     private HistoryService historyService;
+    @Autowired
+    private StationService stationService;
 
     //查询所有用户
     @GetMapping
@@ -141,8 +141,13 @@ public class ScheduleController {
         return new R(true,sc);
     }
     //测试更新调度
-    @GetMapping("/getNSIBB/{id}")
-    public R getNextStationIdByBus(@PathVariable("id") Integer id){
-        return new R(true,scheduleService.getNextStationIdByBus(id));
+    /*
+    * id:调度ID
+    * */
+    @GetMapping("/getStationNum/{id}")
+    public StationResponse getNextStationIdByBus(@PathVariable("id") Integer id){
+        int step = scheduleService.getNextStationIdByBus(id);
+        String nextStationName = stationService.getStationById(scheduleService.getById(id).getNextStationId()).getName();
+        return new StationResponse(step,nextStationName);
     }
 }
