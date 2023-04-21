@@ -46,7 +46,7 @@ public class BusServiceImpl extends ServiceImpl<BusMapper, Bus> implements BusSe
     public IPage<Bus> getBusByPage(Integer currentPage, Integer pageSize){//分页查询
         IPage<Bus> page = new Page<>(currentPage,pageSize);
         QueryWrapper<Bus> queryWrapper = new QueryWrapper<>();
-        queryWrapper.orderByDesc("id");   //根据id倒序排序
+        queryWrapper.orderByDesc("bus_id");   //根据id倒序排序
         return busMapper.selectPage(page,queryWrapper);
     }
 
