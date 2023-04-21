@@ -1,22 +1,14 @@
 package com.chen.sbbus.controller;
 
-import com.chen.sbbus.entity.Driver;
-import com.chen.sbbus.entity.Routes;
-import com.chen.sbbus.entity.Schedule;
-import com.chen.sbbus.entity.Station;
-import com.chen.sbbus.service.DriverService;
-import com.chen.sbbus.service.RouteService;
-import com.chen.sbbus.service.ScheduleService;
-import com.chen.sbbus.service.StationService;
+import com.chen.sbbus.entity.*;
+import com.chen.sbbus.service.*;
 import com.chen.sbbus.utils.*;
 import com.chen.sbbus.utils.MQTT.MQTTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/driver")
@@ -29,6 +21,10 @@ public class DriverController {
     private RouteService routeService;
     @Autowired
     private StationService stationService;
+    @Autowired
+    private HistoryService historyService;
+    @Autowired
+    private WarnService warnService;
     @Autowired
     private MQTTUtils mqttUtils;
     @PostMapping("/login")
@@ -43,19 +39,75 @@ public class DriverController {
             // 更新登录状态
             DriverInfo driverInfo = driverService.getDriverInfoByAccount(account);
             driverService.updateDriverIsOnline(driverInfo.getId(),1);
+
+            //获取调度Schedule
             //获取系统时间
+            SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date date = new Date(System.currentTimeMillis());
+            System.out.println(formatter.format(date));
             GregorianCalendar calendar = new GregorianCalendar();
-            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            //获取调度busId
-//            List<Schedule> scheduleList = scheduleService.getScheduleListByDriverId(driverInfo.getId());
-//            for (Schedule schedule:scheduleList){
-//                int sTime = schedule.getStartTime();
-//                int dTime = schedule.getDTime();
-//            }
-            Schedule schedule = scheduleService.selectScheduleByDriverId(driverInfo.getId());
-            String busId = schedule.getBusId();
+            //int nTime = calendar.get(Calendar.HOUR_OF_DAY);
+            int nTime = 9;
+            List<Schedule> scheduleList = scheduleService.getScheduleListByDriverId(driverInfo.getId());
+            Schedule sc = new Schedule();
+            Integer historyId=0;
+            for (Schedule schedule:scheduleList){
+                int sTime = schedule.getStartTime();
+                int dTime = schedule.getDTime();
+                if (sTime <= nTime){
+                    //登录时间比发车时间晚
+                    if (sTime + dTime > nTime){
+                        //在发车时间内，正常发车
+                        //返回司机调度
+                        sc = schedule;
+                        History history = new History();
+                        history.setScheduleId(schedule.getId());
+                        history.setSTime(formatter.format(date));
+                        history.setCTime(formatter.format(date));
+                        historyService.insertHistory(history);
+                        historyId = history.getId();
+                        scheduleService.setIsDone(schedule.getId());
+                        break;
+
+                    }else {
+                        //不在发车时间内
+                        //当前找到的该司机最早的调度记录已超时,此时系统判断下一条调度表的记录
+                        //记录到警告表中,msg：发车时间超时，且未完成该调度
+                        Warn warn = new Warn();
+                        warn.setScheduleId(schedule.getId());
+                        warn.setMsg("发车时间超时，且未完成该调度");
+                        warnService.insertWarn(warn);
+                        scheduleService.setIsDone(schedule.getId());
+                        //插入到历史记录表中
+                        History history = new History();
+                        history.setScheduleId(schedule.getId());
+                        history.setCTime(formatter.format(date));
+                        historyService.insertHistoryAll(history);
+                        historyId = history.getId();
+                    }
+
+                }else {
+                    //登录时间比发车时间早
+                    //返回司机调度
+                    sc = schedule;
+                    History history = new History();
+                    history.setScheduleId(schedule.getId());
+                    history.setSTime(formatter.format(date));
+                    history.setCTime(formatter.format(date));
+                    historyService.insertHistory(history);
+                    historyId = history.getId();
+                    //记录到警告表中,msg：发车时间过早，时间
+                    Warn warn = new Warn();
+                    warn.setScheduleId(schedule.getId());
+                    warn.setMsg("发车时间过早,时间：" + formatter.format(date));
+                    warnService.insertWarn(warn);
+                    break;
+                }
+
+            }
+            String busId = sc.getBusId();
             //获取线路
-            Routes route = routeService.getRoutesById(schedule.getRouteId());
+            Routes route = routeService.getRoutesById(sc.getRouteId());
             List<String> stations = route.getStationsList();
 
 
@@ -74,24 +126,32 @@ public class DriverController {
                 stationInfo.setStationName(station.getName());
                 stationInfos.add(stationInfo);
             }
-            scheduleInfo.setSchedule(schedule);
+            scheduleInfo.setSchedule(sc);
 
             scheduleInfo.setStationInfos(stationInfos);
             scheduleInfo.setStationNum(stations.size());
+            scheduleInfo.setHistoryId(historyId);
             return new LoginResponse(true,token, driverInfo,scheduleInfo);
         }
         else{
             return new LoginResponse(false,null,null,null);
         }
     }
-    @GetMapping("/logout/{id}")
-    public R logout(@PathVariable("id") Integer id){
+    @GetMapping("/logout/{id}/{hId}")
+    public R logout(@PathVariable("id") Integer id,@PathVariable("hId") Integer hId){
+        //设置离线
         driverService.updateDriverIsOnline(id,0);
-        Schedule schedule = scheduleService.selectScheduleByDriverId(id);
+        Schedule schedule = scheduleService.getById(id);
         String busId = schedule.getBusId();
         String topic = "/bus/"+busId+"/pub_topic";
         //退出登录后退订相关主题
         mqttUtils.unSubscribeTopic(topic);
+        //记录到历史记录表中
+        //获取系统时间
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = new Date(System.currentTimeMillis());
+        System.out.println(formatter.format(date));
+        historyService.updateHistoryById(hId,formatter.format(date));
         return new R(true);
     }
     @GetMapping

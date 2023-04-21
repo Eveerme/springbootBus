@@ -9,5 +9,5 @@ public interface HistoryService extends IService<History> {
 
     Integer insertHistoryAll(History history); //新增一条已完成的记录
 
-    Integer updateHistoryById(String id, String eTime);
+    Integer updateHistoryById(Integer id, String eTime);
 }
