@@ -17,10 +17,10 @@ public class Station {
     private String id;
     private String name;
     private float longitude;//经度最高
-    @TableField("ew")
+
     private String ew;//经度最低
     private float latitude;  //纬度最高
-    @TableField("ns")
+
     private String ns;//纬度最低
 
 }
