@@ -140,5 +140,9 @@ public class ScheduleController {
         }
         return new R(true,sc);
     }
-
+    //测试更新调度
+    @GetMapping("/getNSIBB/{id}")
+    public R getNextStationIdByBus(@PathVariable("id") Integer id){
+        return new R(true,scheduleService.getNextStationIdByBus(id));
+    }
 }
