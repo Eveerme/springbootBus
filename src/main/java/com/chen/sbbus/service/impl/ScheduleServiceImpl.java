@@ -89,26 +89,32 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
                     &&bus.getBusEW().equals(station.getEw())
                     &&bus.getBusNS().equals(station.getNs())
             ){//在本站点
-                if(!station.getId().equals(schedule.getNextStationId())){//判断是否出现越过其他站点等错误
+                if((!station.getId().equals(schedule.getNextStationId())&&schedule.getFlag()==1&&!station.getId().equals(routes.getStart()))
+                        ||(station.getId().equals(routes.getStart())&&schedule.getFlag()==1&&!stationsList.get(i+1).equals(schedule.getNextStationId()))){//判断是否出现越过其他站点等错误
                     //说明出现错误，将数据插入warn中并加入越过的站点
                     Warn warn = new Warn();
                     warn.setScheduleId(schedule.getId());
-                    //找到schedule的下一个站点信息并确定越过的站点
-                    for (int j = 0; j < stationsList.size(); j++) {
-                        if(schedule.getNextStationId().equals(stationsList.get(j))){
-                            j1=j;
-
-                        }
-                        if(j1>0 && j1!=i){
-                            result=result.append(stationsList.get(j1)+" ");
-                            j1++;
-                        }
-
+                    if(stationsList.get(i).equals(schedule.getNextStationId())){
+                        warn.setMsg("下一站点信息错误，当前站点为"+station.getId());
                     }
-                    warn.setMsg("没有按照指定站点路线行驶，未经过的站点id为："+result);
+                    else {
+                        //找到schedule的下一个站点信息并确定越过的站点
+                        for (int j = 0; j < stationsList.size(); j++) {
+                            if(schedule.getNextStationId().equals(stationsList.get(j))){
+                                j1=j;
+                            }
+                            if(j1>0 && j1!=i){
+                                result=result.append(stationsList.get(j1)+" ");
+                                j1++;
+                            }
+
+                        }
+                        warn.setMsg("没有按照指定站点路线行驶，未经过的站点id为："+result);
+                    }
                     warnMapper.insertWarn(warn);
 
                 }
+                scheduleMapper.updateScheduleFlag(schedule.getId(),0);//站点测试通过
                 //更新schedule数据，返回经过站点数
                 flag=true;
                 //判断是否在终点站
@@ -121,6 +127,11 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
 
                 return i;
             }
+            else{
+                scheduleMapper.updateScheduleFlag(schedule.getId(),1);
+            }
+
+
         }
         if(!flag){//bus不在站点
             //判断该站点是第几个站点
