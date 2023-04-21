@@ -139,6 +139,7 @@ public class DriverController {
     }
     @GetMapping("/logout/{id}/{hId}")
     public R logout(@PathVariable("id") Integer id,@PathVariable("hId") Integer hId){
+        //设置离线
         driverService.updateDriverIsOnline(id,0);
         Schedule schedule = scheduleService.getById(id);
         String busId = schedule.getBusId();
