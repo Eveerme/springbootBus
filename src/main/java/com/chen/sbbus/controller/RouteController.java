@@ -29,10 +29,11 @@ public class RouteController {
     }
 
     //根据Id删除用户
-    @DeleteMapping("/delete/{id}")
-    public R deleteRouteById(@PathVariable Integer id){
+    @GetMapping("/delete")
+    public R deleteRouteById(@RequestParam("id") Integer id){
         return new R(routeService.removeById(id));
     }
+
 
     //新增用户
     @PostMapping("/insert")
@@ -42,6 +43,7 @@ public class RouteController {
     //新更新用户
     @PostMapping("/update")
     public R updateRoute(@RequestBody Routes route){
+        route.toString();
         return new R(routeService.updateRoute(route));
     }
 

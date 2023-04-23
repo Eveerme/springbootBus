@@ -35,14 +35,14 @@ public class ManagerController {
         if(manage.login(account,password)!=null){
             String token = JWTUtils.getMToken(request);
             //登录成功后订阅相关的主题
-            List<Driver> driverList = driverService.selectDriverOnline();
-            for (Driver driver:driverList){
-                Schedule schedule = scheduleService.selectScheduleByDriverId(driver.getId());
-                String busId = schedule.getBusId();
-                String topic = "/bus/"+busId+"/pub_topic";
-                mqttUtils.subscribeTopic(topic, 2);
-                System.out.println("订阅主题:"+topic);
-            }
+//            List<Driver> driverList = driverService.selectDriverOnline();
+//            for (Driver driver:driverList){
+//                Schedule schedule = scheduleService.selectScheduleByDriverId(driver.getId());
+//                String busId = schedule.getBusId();
+//                String topic = "/bus/"+busId+"/pub_topic";
+//                mqttUtils.subscribeTopic(topic, 2);
+//                System.out.println("订阅主题:"+topic);
+//            }
             return new R(true,token);
         }
         else{

@@ -54,4 +54,9 @@ public class BusServiceImpl extends ServiceImpl<BusMapper, Bus> implements BusSe
     public Boolean deleteBusById(String id) {//根据id删除司机信息
         return busMapper.deleteBusById(id);
     }
+
+    @Override
+    public Integer updateBusId(String nId, String bId) {
+        return busMapper.updateBusId(nId,bId);
+    }
 }

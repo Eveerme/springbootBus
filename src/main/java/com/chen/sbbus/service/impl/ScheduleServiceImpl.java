@@ -36,6 +36,11 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
     }
 
     @Override
+    public Integer updateScheduleNSI(Schedule schedule) {
+        return scheduleMapper.updateScheduleNSI(schedule);
+    }
+
+    @Override
     public Integer updateSchedule(Schedule schedule) {
         return scheduleMapper.updateSchedule(schedule);
     }
@@ -122,7 +127,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
                     schedule.setNextStationId(stationsList.get(i));
                 }else {
                     schedule.setNextStationId(stationsList.get(i+1));
-                    scheduleMapper.updateSchedule(schedule);
+                    scheduleMapper.updateScheduleNSI(schedule);
                 }
 
                 return i;

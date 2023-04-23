@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface ScheduleService extends IService<Schedule> {
     Integer insertSchedule(Schedule schedule);      //插入一条新的站点信息
-    Integer updateSchedule(Schedule schedule);     //修改站点信息
-
+    Integer updateScheduleNSI(Schedule schedule);     //修改站点信息
+    Integer updateSchedule(Schedule schedule);//更新调度信息
     Integer setIsDone(Integer id);//设置已检索该调度
 
     Schedule selectScheduleByDriverId(Integer id);

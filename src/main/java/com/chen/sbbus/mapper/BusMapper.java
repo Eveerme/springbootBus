@@ -17,6 +17,8 @@ public interface BusMapper extends BaseMapper<Bus> {
 
     @Update("update db_bus set bus_temp=#{busTemp}, bus_hum=#{busHum}, bus_air=#{busAir}, bus_beep=#{busBeep}, bus_longitude=#{busLatitude}, bus_n_s=#{busNS}, bus_longitude=#{busLongitude}, bus_e_w=#{busEW} ,bus_speed=#{busSpeed} where bus_id=#{busId}")
     Integer updateBus(Bus bus);//修改信息
+    @Update("update db_bus set bus_id=#{nId} where bus_id=#{bId}")
+    Integer updateBusId(@Param("nId")String nId,@Param("bId")String bId);//修改信息
 
     @Delete("delete from db_bus where bus_id =#{id}")
     Boolean deleteBusById(@Param("id") String id);//根据id删除数据

@@ -31,8 +31,13 @@ public class BusController {
     //根据id更新bus信息
     @PostMapping("/update")
     public R updateBusInfo(@RequestBody Bus bus){
-        busService.updateBus(bus);
-        return new R(true);
+
+        return new R(true,busService.updateBus(bus));
+    }
+    @GetMapping("/updateId")
+    public R updateId(@RequestParam("busId") String nId,@RequestParam("bId") String bId){
+
+        return new R(true,busService.updateBusId(nId,bId));
     }
     @GetMapping("/delete")
     public R deleteBusById(@RequestParam("id") String id){

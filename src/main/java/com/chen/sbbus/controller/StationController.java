@@ -24,11 +24,10 @@ public class StationController {
     }
     @PostMapping("/update")
     public R updateStation(@RequestParam Station station){
-        stationService.updateStation(station);
-        return new R(true);
+        return new R(true,stationService.updateStation(station));
     }
-    @DeleteMapping("/delete/{id}")
-    public R deleteStationById(@PathVariable String id){
+    @GetMapping("/delete")
+    public R deleteStationById(@RequestParam("id") String id){
         return new R(stationService.deleteStationById(id));
     }
     @GetMapping("/get/{id}")

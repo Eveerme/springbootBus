@@ -49,9 +49,9 @@ public class ScheduleController {
         return new R(true,scheduleService.getById(id));
     }
 
-    //根据Id删除用户
-    @DeleteMapping("/delete/{id}")
-    public R deleteScheduleById(@PathVariable("id") Integer id){
+    //根据Id删除信息
+    @GetMapping("/delete")
+    public R deleteScheduleById(@RequestParam("id") Integer id){
         return new R(scheduleService.removeById(id));
     }
 
