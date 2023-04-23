@@ -4,6 +4,9 @@ import com.chen.sbbus.entity.*;
 import com.chen.sbbus.service.*;
 import com.chen.sbbus.utils.*;
 import com.chen.sbbus.utils.MQTT.MQTTUtils;
+import com.chen.sbbus.utils.Re.DriverLoginResponse;
+import com.chen.sbbus.utils.Re.LoginRequest;
+import com.chen.sbbus.utils.Re.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -136,6 +139,47 @@ public class DriverController {
         }
         else{
             return new LoginResponse(false,null,null,null);
+        }
+    }
+    @PostMapping("/driverLogin")
+    public DriverLoginResponse driverLogin(@RequestBody LoginRequest request){
+        // verify username and password, and return token and user info if valid
+        //验证用户名和密码，并返回token和用户信息（如果有效）
+        String account = request.getAccount();
+        String password = request.getPassword();
+        if (driverService.login(account, password)){
+            //信息验证成功，返回部分用户信息
+            String token = JWTUtils.getToken(request);
+            // 更新登录状态
+            DriverInfo driverInfo = driverService.getDriverInfoByAccount(account);
+            driverService.updateDriverIsOnline(driverInfo.getId(),1);
+            List<ScheduleInfo> scheduleInfoList = new ArrayList<>();
+            List<Schedule> scheduleList = scheduleService.getScheduleIsNotDone(driverInfo.getId());
+            for (Schedule schedule:scheduleList){
+                ScheduleInfo scheduleInfo = new ScheduleInfo();
+                scheduleInfo.setSchedule(schedule);
+                List<StationInfo> stationInfos = new ArrayList<>();
+                //获取线路
+                Routes route = routeService.getRoutesById(schedule.getRouteId());
+                List<String> stations = route.getStationsList();
+
+                for (String stationId:stations) {
+                    StationInfo stationInfo = new StationInfo();
+                    stationInfo.setStationId(stationId);
+                    Station station = stationService.getStationById(stationId);
+                    stationInfo.setStationName(station.getName());
+                    stationInfos.add(stationInfo);
+                }
+                scheduleInfo.setStart(stationInfos.get(0).getStationName());
+                scheduleInfo.setEnd(stationInfos.get(stationInfos.size()-1).getStationName());
+                scheduleInfo.setStationInfos(stationInfos);
+                scheduleInfo.setStationNum(stations.size());
+                scheduleInfoList.add(scheduleInfo);
+            }
+            return new DriverLoginResponse(true,token, driverInfo,scheduleInfoList,scheduleInfoList.size());
+        }
+        else{
+            return new DriverLoginResponse(false,null,null,null,null);
         }
     }
     /*

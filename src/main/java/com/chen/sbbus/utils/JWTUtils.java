@@ -7,6 +7,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.chen.sbbus.Exception.MyException;
 import com.chen.sbbus.service.DriverService;
+import com.chen.sbbus.utils.Re.LoginRequest;
+import com.chen.sbbus.utils.Re.ManagerLoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
