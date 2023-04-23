@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ScheduleInfo {
     Schedule schedule;
-    List<StationInfo> StationInfos;
+    List<StationInfo> stationInfos;
     int stationNum; //站点总数量
     String start;   //起始站点名称
     String end;     //结束站点名称

@@ -152,6 +152,10 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
         return 0;
     }
 
+    @Override
+    public List<Schedule> getScheduleIsNotDone(Integer id) {
+        return scheduleMapper.getScheduleIsNotDone(id);
+    }
 
 
 }

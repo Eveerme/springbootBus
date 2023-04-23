@@ -19,4 +19,6 @@ public interface ScheduleService extends IService<Schedule> {
 
     IPage<Schedule> getScheduleByPage(Integer currentPage, Integer pageSize);//分页查询
     Integer getNextStationIdByBus(Integer id);
+
+    List<Schedule> getScheduleIsNotDone(Integer id);
 }

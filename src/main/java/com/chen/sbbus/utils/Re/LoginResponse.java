@@ -1,5 +1,7 @@
-package com.chen.sbbus.utils;
+package com.chen.sbbus.utils.Re;
 
+import com.chen.sbbus.utils.DriverInfo;
+import com.chen.sbbus.utils.ScheduleInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
