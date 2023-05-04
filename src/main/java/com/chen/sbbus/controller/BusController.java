@@ -3,6 +3,7 @@ package com.chen.sbbus.controller;
 import com.chen.sbbus.entity.Bus;
 import com.chen.sbbus.service.BusService;
 
+import com.chen.sbbus.utils.MQTT.MQTTUtils;
 import com.chen.sbbus.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ public class BusController {
 
     @Autowired
     private BusService busService;
+    @Autowired
+    private MQTTUtils mqttUtils;
 
     //查询所有Bus
     @GetMapping
@@ -48,6 +51,26 @@ public class BusController {
     public R getAllBusByPage(@RequestParam("currentPage") int currentPage,
                              @RequestParam("pageSize") int pageSize){
         return new R(true,busService.getBusByPage(currentPage,pageSize));
+    }
+
+    @GetMapping("/testSubscribe/{busId}")
+    public R testSubscribe(@PathVariable("busId")Integer busId){
+        String topic = "/bus/"+busId+"/pub_topic";
+        mqttUtils.subscribeTopic(topic,2);
+        return new R(true);
+    }
+
+    @GetMapping("/testUnSubscribe/{busId}")
+    public R testUnSubscribe(@PathVariable("busId")Integer busId){
+        String topic = "/bus/"+busId+"/pub_topic";
+        mqttUtils.unSubscribeTopic(topic);
+        return new R(true);
+    }
+
+    @GetMapping("/testPublish/{busId}/{msg}")
+    public R testPublish(@PathVariable("busId")Integer busId,@PathVariable("msg")String msg){
+        busService.alarmMsg(busId,msg);
+        return new R(true);
     }
 
 }

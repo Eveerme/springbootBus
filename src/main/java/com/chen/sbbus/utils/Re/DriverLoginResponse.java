@@ -15,6 +15,4 @@ public class DriverLoginResponse {
     private Boolean status;
     private String token;
     private DriverInfo driverInfo;
-    private List<ScheduleInfo> scheduleInfoList;
-    private Integer scheduleNum;
 }

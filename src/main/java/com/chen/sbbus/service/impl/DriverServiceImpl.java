@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class         DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> implements DriverService {
+public class DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> implements DriverService {
     @Autowired
     private DriverMapper driverMapper;
     @Override
@@ -35,6 +35,11 @@ public class         DriverServiceImpl extends ServiceImpl<DriverMapper,Driver> 
     @Override
     public DriverInfo getDriverInfoById(String id) {
         return driverMapper.getDriverById(id);
+    }
+
+    @Override
+    public Integer getDriverIsOnlineById(Integer id) {
+        return driverMapper.getDriverIsOnlineById(id);
     }
 
     @Override

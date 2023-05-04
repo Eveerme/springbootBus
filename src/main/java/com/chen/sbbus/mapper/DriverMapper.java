@@ -19,6 +19,8 @@ public interface DriverMapper extends BaseMapper<Driver> {
     DriverInfo getDriverById(@Param("id") String id);//根据id显示所有信息
     @Select("SELECT id,account,name,sex,phone,address,create_time from db_driver where account = #{account}")
     DriverInfo getDriverByAccount(@Param("account") String account);//根据账号显示所有信息
+    @Select("select is_online from db_driver where id = #{id}")
+    Integer getDriverIsOnlineById(@Param("id") Integer id);
 
     @Insert("INSERT INTO db_driver(account,password,name,sex,phone,address) VALUES(#{account},#{name},#{password},#{sex},#{phone},#{address})")
     Integer insertDriver(Driver driver);//插入一条新的信息

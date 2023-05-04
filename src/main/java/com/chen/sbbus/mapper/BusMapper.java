@@ -15,7 +15,7 @@ public interface BusMapper extends BaseMapper<Bus> {
     @Insert("INSERT INTO db_bus(bus_id,bus_temp,bus_hum,bus_air,bus_beep,bus_latitude,bus_n_s,bus_longitude,bus_e_w,bus_speed) VALUES(#{busId},#{busTemp},#{busHum},#{busAir},#{busBeep},#{busLatitude},#{busNS},#{busLongitude},#{busEW},#{busSpeed});")
     Integer insertBus(Bus bus);
 
-    @Update("update db_bus set bus_temp=#{busTemp}, bus_hum=#{busHum}, bus_air=#{busAir}, bus_beep=#{busBeep}, bus_longitude=#{busLatitude}, bus_n_s=#{busNS}, bus_longitude=#{busLongitude}, bus_e_w=#{busEW} ,bus_speed=#{busSpeed} where bus_id=#{busId}")
+    @Update("update db_bus set bus_temp=#{busTemp}, bus_hum=#{busHum}, bus_air=#{busAir}, bus_beep=#{busBeep}, bus_longitude=#{busLongitude}, bus_n_s=#{busNS}, bus_latitude=#{busLatitude}, bus_e_w=#{busEW} ,bus_speed=#{busSpeed} ,bus_pitch=#{busPitch} ,bus_roll=#{busRoll} where bus_id=#{busId}")
     Integer updateBus(Bus bus);//修改信息
     @Update("update db_bus set bus_id=#{nId} where bus_id=#{bId}")
     Integer updateBusId(@Param("nId")String nId,@Param("bId")String bId);//修改信息

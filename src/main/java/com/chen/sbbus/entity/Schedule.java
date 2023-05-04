@@ -23,6 +23,7 @@ public class Schedule {
     private Integer isDone;
     private String nextStationId;
     private Integer flag;
+    private Integer isPermit;
 }
 
 

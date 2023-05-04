@@ -22,4 +22,6 @@ public class Bus {
     private float busLongitude;
     private String busEW;
     private float busSpeed;
+    private float busPitch;
+    private float busRoll;
 }

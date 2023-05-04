@@ -28,5 +28,11 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
     List<Schedule> getScheduleListByDriverId(@Param("id") Integer id);
     @Select("select * from db_schedule where is_done = 0 and driver_id = #{id}")
     List<Schedule> getScheduleIsNotDone(@Param("id") Integer id);
+    @Select("select * from db_schedule where is_done = 0 and driver_id = #{id} and is_permit = 1")
+    List<Schedule> getScheduleIsNotDoneAndIsPermit(@Param("id")Integer id);
+    @Update("update db_schedule set is_permit = #{isPermit} where id = #{id}")
+    Integer setIsPermitById(@Param("id") Integer id,@Param("isPermit") Integer isPermit);
+    @Select("select * from db_schedule where id = #{id}")
+    Integer getIsPermitById(@Param("id") Integer id);
 
 }

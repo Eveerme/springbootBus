@@ -21,4 +21,8 @@ public interface ScheduleService extends IService<Schedule> {
     Integer getNextStationIdByBus(Integer id);
 
     List<Schedule> getScheduleIsNotDone(Integer id);
+    List<Schedule> getScheduleIsNotDoneAndIsPermit(Integer id);
+    Integer setIsPermitById(Integer id,Integer isPermit);
+
+    Integer getIsPermitById(Integer id);
 }

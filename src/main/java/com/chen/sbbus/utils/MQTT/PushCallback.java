@@ -63,9 +63,14 @@ public class PushCallback implements MqttCallback {
         System.out.println("接收消息内容 : " + result);
         //这里可以针对收到的消息做处理，比如持久化
         //从JSON字符串解析Bean
-        Bus bus = JSONObject.parseObject(result, Bus.class);
-        System.out.println(bus.toString());
-        busService.updateBus(bus);
+        try {
+            Bus bus = JSONObject.parseObject(result, Bus.class);
+            System.out.println(bus.toString());
+            busService.updateBus(bus);
+        }catch (Exception e){
+            LOGGER.info("---------服务错误");
+        }
+
     }
 
 }

@@ -37,13 +37,12 @@ public class DriverController {
         String account = request.getAccount();
         String password = request.getPassword();
         if (driverService.login(account, password)){
-            //信息验证成功，返回部分用户信息
-            String token = JWTUtils.getToken(request);
             // 更新登录状态
             DriverInfo driverInfo = driverService.getDriverInfoByAccount(account);
-            driverService.updateDriverIsOnline(driverInfo.getId(),1);
-
-            //获取调度Schedule
+            if (driverService.getDriverIsOnlineById(driverInfo.getId())==1){
+                //账号有其他设备同时在线，无法同时登录
+                return new LoginResponse(false,"账号有其他设备同时在线，请退出其它在线后再尝试登录",null,null);
+            }
             //获取系统时间
             SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm");
             Date date = new Date(System.currentTimeMillis());
@@ -52,62 +51,24 @@ public class DriverController {
             //int nTime = calendar.get(Calendar.HOUR_OF_DAY);
             int nTime = 8;
             List<Schedule> scheduleList = scheduleService.getScheduleListByDriverId(driverInfo.getId());
-            Schedule sc = new Schedule();
-            Integer historyId=0;
-            for (Schedule schedule:scheduleList){
-                int sTime = schedule.getStartTime();
-                int dTime = schedule.getDTime();
-                if (sTime <= nTime){
-                    //登录时间比发车时间晚
-                    if (sTime + dTime > nTime){
-                        //在发车时间内，正常发车
-                        //返回司机调度
-                        sc = schedule;
-                        History history = new History();
-                        history.setScheduleId(schedule.getId());
-                        history.setSTime(formatter.format(date));
-                        history.setCTime(formatter.format(date));
-                        historyService.insertHistory(history);
-                        historyId = history.getId();
-                        scheduleService.setIsDone(schedule.getId());
-                        break;
-
-                    }else {
-                        //不在发车时间内
-                        //当前找到的该司机最早的调度记录已超时,此时系统判断下一条调度表的记录
-                        //记录到警告表中,msg：发车时间超时，且未完成该调度
-                        Warn warn = new Warn();
-                        warn.setScheduleId(schedule.getId());
-                        warn.setMsg("发车时间超时，且未完成该调度");
-                        warnService.insertWarn(warn);
-                        scheduleService.setIsDone(schedule.getId());
-                        //插入到历史记录表中
-                        History history = new History();
-                        history.setScheduleId(schedule.getId());
-                        history.setCTime(formatter.format(date));
-                        historyService.insertHistoryAll(history);
-                        historyId = history.getId();
-                    }
-
-                }else {
-                    //登录时间比发车时间早
-                    //返回司机调度
-                    sc = schedule;
-                    History history = new History();
-                    history.setScheduleId(schedule.getId());
-                    history.setSTime(formatter.format(date));
-                    history.setCTime(formatter.format(date));
-                    historyService.insertHistory(history);
-                    historyId = history.getId();
-                    //记录到警告表中,msg：发车时间过早，时间
-                    Warn warn = new Warn();
-                    warn.setScheduleId(schedule.getId());
-                    warn.setMsg("发车时间过早,时间：" + formatter.format(date));
-                    warnService.insertWarn(warn);
-                    break;
-                }
-
+            Schedule sc = scheduleList.get(0);
+            if (sc.getIsPermit()==0){
+                //不允许发车，不可以登录
+                return new LoginResponse(false,"禁止登录！请先扫码签到！",null,null);
             }
+            //允许登录的情况,先插入到历史表，记录hId
+            String token = JWTUtils.getToken(request);
+            driverService.updateDriverIsOnline(driverInfo.getId(),1);
+
+            Integer historyId=0;
+            History history = new History();
+            history.setScheduleId(sc.getId());
+            history.setSTime(formatter.format(date));
+            history.setCTime(formatter.format(date));
+            historyService.insertHistory(history);
+            historyId = history.getId();
+
+            scheduleService.setIsDone(sc.getId());
             String busId = sc.getBusId();
             //获取线路
             Routes route = routeService.getRoutesById(sc.getRouteId());
@@ -152,34 +113,47 @@ public class DriverController {
             String token = JWTUtils.getToken(request);
             // 更新登录状态
             DriverInfo driverInfo = driverService.getDriverInfoByAccount(account);
+            if (driverService.getDriverIsOnlineById(driverInfo.getId())==1){
+                //账号有其他设备同时在线，无法同时登录
+                return new DriverLoginResponse(false,"账号有其他设备同时在线，请退出其它在线后再尝试登录",null);
+            }
             driverService.updateDriverIsOnline(driverInfo.getId(),1);
             List<ScheduleInfo> scheduleInfoList = new ArrayList<>();
             List<Schedule> scheduleList = scheduleService.getScheduleIsNotDone(driverInfo.getId());
+            //更新调度表
             for (Schedule schedule:scheduleList){
-                ScheduleInfo scheduleInfo = new ScheduleInfo();
-                scheduleInfo.setSchedule(schedule);
-                List<StationInfo> stationInfos = new ArrayList<>();
-                //获取线路
-                Routes route = routeService.getRoutesById(schedule.getRouteId());
-                List<String> stations = route.getStationsList();
+                //获取系统时间
+                SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                Date date = new Date(System.currentTimeMillis());
+                System.out.println(formatter.format(date));
+                GregorianCalendar calendar = new GregorianCalendar();
+                //int nTime = calendar.get(Calendar.HOUR_OF_DAY);
+                int sTime = schedule.getStartTime();
+                int dTime = schedule.getDTime();
+                int nTime = 8;
+                if (sTime <= nTime && nTime < sTime+dTime){
+                    //该调度在发车时间段内
+                    break;
+                }else if (nTime >= sTime+dTime){
+                    //该调度在发车时间段后
+                    //该调度已作废，填入历史记录表，记录为未完成
+                    History history = new History();
+                    history.setScheduleId(schedule.getId());
+                    history.setCTime(formatter.format(date));
+                    historyService.insertHistory(history);
+                    //同时设置is_done为1
+                    scheduleService.setIsDone(schedule.getId());
 
-                for (String stationId:stations) {
-                    StationInfo stationInfo = new StationInfo();
-                    stationInfo.setStationId(stationId);
-                    Station station = stationService.getStationById(stationId);
-                    stationInfo.setStationName(station.getName());
-                    stationInfos.add(stationInfo);
+                }else {
+                    //该调度在发车时间段前
+                    break;
                 }
-                scheduleInfo.setStart(stationInfos.get(0).getStationName());
-                scheduleInfo.setEnd(stationInfos.get(stationInfos.size()-1).getStationName());
-                scheduleInfo.setStationInfos(stationInfos);
-                scheduleInfo.setStationNum(stations.size());
-                scheduleInfoList.add(scheduleInfo);
             }
-            return new DriverLoginResponse(true,token, driverInfo,scheduleInfoList,scheduleInfoList.size());
+
+            return new DriverLoginResponse(true,token, driverInfo);
         }
         else{
-            return new DriverLoginResponse(false,null,null,null,null);
+            return new DriverLoginResponse(false,null,null);
         }
     }
     /*
@@ -193,6 +167,9 @@ public class DriverController {
         driverService.updateDriverIsOnline(schedule.getDriverId(),0);
         String busId = schedule.getBusId();
         String topic = "/bus/"+busId+"/pub_topic";
+        String subTopic = "/bus/"+schedule.getBusId()+"/sub_topic";
+        String msg = "0";
+        mqttUtils.publishMsg(subTopic,msg,2);
         //退出登录后退订相关主题
         mqttUtils.unSubscribeTopic(topic);
         //记录到历史记录表中
@@ -202,6 +179,78 @@ public class DriverController {
         System.out.println(formatter.format(date));
         historyService.updateHistoryById(hId,formatter.format(date));
         return new R(true);
+    }
+    /*
+    * 扫码签到
+    * */
+    @GetMapping("/signIn/{bId}/{sId}/{dId}")
+    public R signIn(@PathVariable("bId") Integer bId,@PathVariable("sId") Integer sId,@PathVariable("dId") Integer dId){
+        Schedule schedule = scheduleService.getById(sId);
+        if (schedule.getDriverId()!=dId){
+            return new R(false,"扫码错误，不是此辆车！");
+        }
+        if (schedule.getIsPermit()==1){
+            return new R(false,"签到错误，已经签过到了！");
+        }
+        //获取系统时间
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = new Date(System.currentTimeMillis());
+        System.out.println(formatter.format(date));
+        GregorianCalendar calendar = new GregorianCalendar();
+        //int nTime = calendar.get(Calendar.HOUR_OF_DAY);
+        int sTime = schedule.getStartTime();
+        int dTime = schedule.getDTime();
+        int nTime = 8;
+        if (sTime <= nTime && nTime < sTime+dTime){
+            //在发车时间段内，可以发车
+            scheduleService.setIsPermitById(sId,1);
+            //发送命令给MQTT告知设备允许发车
+            String topic = "/bus/"+schedule.getBusId()+"/sub_topic";
+            String msg = "1";
+            mqttUtils.publishMsg(topic,msg,2);
+            //返回给小程序签到成功，允许发车
+            return new R(true,"签到成功，允许发车");
+        }else {
+            //不在发车时间段内，不允许发车
+            return new R(false,"不在签到时间");
+        }
+    }
+    @GetMapping("/DriverLogout/{id}")
+    public R logout(@PathVariable("id") Integer id){
+        //设置离线状态
+        driverService.updateDriverIsOnline(id,0);
+        return new R(true);
+    }
+    /*
+    * 获取未完成调度的信息
+    * */
+    @GetMapping("/getScheduleInfoList/{dId}")
+    public R getScheduleInfoList(@PathVariable("dId") Integer dId){
+        List<ScheduleInfo> scheduleInfoList = new ArrayList<>();
+        List<Schedule> scheduleList = scheduleService.getScheduleIsNotDone(dId);
+
+        for (Schedule schedule:scheduleList){
+            ScheduleInfo scheduleInfo = new ScheduleInfo();
+            scheduleInfo.setSchedule(schedule);
+            List<StationInfo> stationInfos = new ArrayList<>();
+            //获取线路
+            Routes route = routeService.getRoutesById(schedule.getRouteId());
+            List<String> stations = route.getStationsList();
+
+            for (String stationId:stations) {
+                StationInfo stationInfo = new StationInfo();
+                stationInfo.setStationId(stationId);
+                Station station = stationService.getStationById(stationId);
+                stationInfo.setStationName(station.getName());
+                stationInfos.add(stationInfo);
+            }
+            scheduleInfo.setStart(stationInfos.get(0).getStationName());
+            scheduleInfo.setEnd(stationInfos.get(stationInfos.size()-1).getStationName());
+            scheduleInfo.setStationInfos(stationInfos);
+            scheduleInfo.setStationNum(stations.size());
+            scheduleInfoList.add(scheduleInfo);
+        }
+        return new R(true,scheduleInfoList);
     }
     @GetMapping
     public R getAllDriver(){

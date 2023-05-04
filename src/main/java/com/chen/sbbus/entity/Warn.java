@@ -18,4 +18,5 @@ public class Warn {
     private Integer scheduleId;
     private String msg;
     private Integer isSolve;
+    private String time;
 }

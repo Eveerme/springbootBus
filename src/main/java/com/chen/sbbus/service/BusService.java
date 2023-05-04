@@ -15,4 +15,6 @@ public interface BusService extends IService<Bus> {
     IPage<Bus> getBusByPage(Integer currentPage, Integer pageSize);
     Boolean deleteBusById(String id);
     Integer updateBusId(String nId, String bId);
+
+    void alarmMsg(Integer busId,String msg);
 }

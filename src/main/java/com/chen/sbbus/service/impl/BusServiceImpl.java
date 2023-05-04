@@ -5,19 +5,28 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.sbbus.entity.Bus;
+import com.chen.sbbus.entity.Warn;
 import com.chen.sbbus.mapper.BusMapper;
+import com.chen.sbbus.mapper.WarnMapper;
 import com.chen.sbbus.service.BusService;
+import com.chen.sbbus.utils.MQTT.MQTTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class BusServiceImpl extends ServiceImpl<BusMapper, Bus> implements BusService {
     @Autowired
     private BusMapper busMapper;
+    @Autowired
+    private WarnMapper warnMapper;
+    @Autowired
+    private MQTTUtils mqttUtils;
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)    //读已提交
@@ -59,4 +68,15 @@ public class BusServiceImpl extends ServiceImpl<BusMapper, Bus> implements BusSe
     public Integer updateBusId(String nId, String bId) {
         return busMapper.updateBusId(nId,bId);
     }
+
+    /*
+    * 发送2为报警
+    * 发送3为取消报警
+    * */
+    @Override
+    public void alarmMsg(Integer busId, String msg) {
+        String topic = "/bus/"+busId+"/sub_topic";
+        mqttUtils.publishMsg(topic,msg,2);
+    }
+
 }

@@ -95,7 +95,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
                     &&bus.getBusNS().equals(station.getNs())
             ){//在本站点
                 if((!station.getId().equals(schedule.getNextStationId())&&schedule.getFlag()==1&&!station.getId().equals(routes.getStart()))
-                        ||(station.getId().equals(routes.getStart())&&schedule.getFlag()==1&&!stationsList.get(i+1).equals(schedule.getNextStationId()))){//判断是否出现越过其他站点等错误
+                        ||(station.getId().equals(routes.getStart())&&schedule.getFlag()==1&&stationsList.get(i).equals(schedule.getNextStationId()))){//判断是否出现越过其他站点等错误
                     //说明出现错误，将数据插入warn中并加入越过的站点
                     Warn warn = new Warn();
                     warn.setScheduleId(schedule.getId());
@@ -155,6 +155,21 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
     @Override
     public List<Schedule> getScheduleIsNotDone(Integer id) {
         return scheduleMapper.getScheduleIsNotDone(id);
+    }
+
+    @Override
+    public List<Schedule> getScheduleIsNotDoneAndIsPermit(Integer id) {
+        return scheduleMapper.getScheduleIsNotDoneAndIsPermit(id);
+    }
+
+    @Override
+    public Integer setIsPermitById(Integer id, Integer isPermit) {
+        return scheduleMapper.setIsPermitById(id,isPermit);
+    }
+
+    @Override
+    public Integer getIsPermitById(Integer id) {
+        return scheduleMapper.getIsPermitById(id);
     }
 
 
