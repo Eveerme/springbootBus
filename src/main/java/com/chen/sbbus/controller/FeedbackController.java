@@ -1,6 +1,7 @@
 package com.chen.sbbus.controller;
 
 import com.chen.sbbus.entity.Feedback;
+import com.chen.sbbus.entity.PrivateNotice;
 import com.chen.sbbus.service.FeedbackService;
 import com.chen.sbbus.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
     //指定本地文件夹存储图片，写到需要保存的目录下
-    String filePath = "D:\\学习\\stm32\\sbBus\\src\\main\\resources\\static\\feedbackImgs\\";
+    String filePath = "D:\\毕设\\登陆界面\\公交调度\\sbbus\\src\\main\\resources\\static\\feedbackImgs\\";
 
     @GetMapping
     public R getAllFeedbackList(){
@@ -44,6 +45,20 @@ public class FeedbackController {
     public R insertFeedback(@RequestBody Feedback feedback){
         System.out.println(feedback.toString());;
         return new R(true,feedbackService.insertFeedback(feedback));
+    }
+    @GetMapping("/page")
+    public R getAllFeedbackByPage(@RequestParam("currentPage")int currentPage,
+                                       @RequestParam("pageSize")int pageSize,
+                                       @RequestParam("dId")String driverId){
+        return new R(true,feedbackService.getFeedbackByPage(currentPage, pageSize,driverId));
+    }
+    @GetMapping("/delete")
+    public R deleteFeedbackById(@RequestParam("id") Integer id){
+        return new R(feedbackService.removeById(id));
+    }
+    @PostMapping("/update")
+    public R updateFeedbackIsSolve(@RequestBody Feedback feedback){
+        return new R(feedbackService.updateFeedbackIsSolve(feedback));
     }
     /*
     * 上传图片

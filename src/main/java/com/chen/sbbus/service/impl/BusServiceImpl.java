@@ -28,6 +28,7 @@ public class BusServiceImpl extends ServiceImpl<BusMapper, Bus> implements BusSe
     @Autowired
     private MQTTUtils mqttUtils;
 
+
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)    //读已提交
     public List<Bus> findAllBus(){    //查询所有司机信息
@@ -67,6 +68,42 @@ public class BusServiceImpl extends ServiceImpl<BusMapper, Bus> implements BusSe
     @Override
     public Integer updateBusId(String nId, String bId) {
         return busMapper.updateBusId(nId,bId);
+    }
+
+    @Override
+    public Integer warnById(String id) {//检测温度，湿度，空气质量是否合格
+        Bus bus = busMapper.getBusById(id);
+        String temp = bus.getBusTemp();
+        String hum = bus.getBusHum();
+        String air = bus.getBusAir();
+        Warn warn = new Warn();
+        Boolean flag = false;
+        StringBuilder result = new StringBuilder();
+        if(Integer.parseInt(temp)>=25){
+            result=result.append("温度过高");
+            flag =true;
+        }
+        if(Integer.parseInt(temp)<=0){
+            result=result.append("温度过高低");
+            flag =true;
+        }
+        if(Integer.parseInt(hum)>=80){
+            result=result.append("湿度过高");
+            flag =true;
+        }
+        if(Integer.parseInt(air)>=150){
+            result=result.append("空气pwm过高");
+            flag =true;
+        }
+        if(flag){
+            warn.setMsg(String.valueOf(result));
+            SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = new Date(System.currentTimeMillis());
+            warn.setTime(formatter.format(date));
+            warnMapper.insertWarn(warn);
+            return 1;
+        }
+        return 0;
     }
 
     /*

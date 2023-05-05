@@ -1,5 +1,6 @@
 package com.chen.sbbus.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.sbbus.entity.Feedback;
 
@@ -12,6 +13,7 @@ public interface FeedbackService extends IService<Feedback> {
     Feedback getFeedbackListById(Integer id);
     Integer insertFeedback(Feedback feedback);
     List<String> convertStringToList(String input);
-
     List<Feedback> getLists(List<Feedback> feedbackList);
+    IPage<Feedback> getFeedbackByPage(int currentPage, int pageSize, String driverId);
+    Integer updateFeedbackIsSolve(Feedback feedback);
 }

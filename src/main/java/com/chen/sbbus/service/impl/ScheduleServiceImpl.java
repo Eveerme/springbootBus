@@ -11,6 +11,8 @@ import com.chen.sbbus.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -95,7 +97,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
                     &&bus.getBusNS().equals(station.getNs())
             ){//在本站点
                 if((!station.getId().equals(schedule.getNextStationId())&&schedule.getFlag()==1&&!station.getId().equals(routes.getStart()))
-                        ||(station.getId().equals(routes.getStart())&&schedule.getFlag()==1&&stationsList.get(i).equals(schedule.getNextStationId()))){//判断是否出现越过其他站点等错误
+                        ||(station.getId().equals(routes.getStart())&&schedule.getFlag()==1&&stationsList.get(i+1).equals(schedule.getNextStationId()))){//判断是否出现越过其他站点等错误
                     //说明出现错误，将数据插入warn中并加入越过的站点
                     Warn warn = new Warn();
                     warn.setScheduleId(schedule.getId());
@@ -116,6 +118,9 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
                         }
                         warn.setMsg("没有按照指定站点路线行驶，未经过的站点id为："+result);
                     }
+                    SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = new Date(System.currentTimeMillis());
+                    warn.setTime(formatter.format(date));
                     warnMapper.insertWarn(warn);
 
                 }

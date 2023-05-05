@@ -18,6 +18,7 @@ public interface DriverService extends IService<Driver> {
     Integer insertDriver(Driver driver);      //插入一条新的站点信息
     Integer updateDriver(Driver driver);     //修改站点信息
 
+
     Integer updateDriverIsOnline(Integer id,int i);
 
     List<Driver> selectDriverOnline();

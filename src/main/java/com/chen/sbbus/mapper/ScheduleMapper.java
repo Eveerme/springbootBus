@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface ScheduleMapper extends BaseMapper<Schedule> {
-    @Insert("INSERT INTO db_schedule(bus_id,driver_id,route_id,start_time,d_time,direction,is_done,next_station_id) VALUES(#{busId},#{driverId},#{routeId},#{startTime},#{dTime},#{direction},#{isDone},#{nextStationId})")
+    @Insert("INSERT INTO db_schedule(bus_id,driver_id,route_id,start_time,d_time,direction,is_done,next_station_id) VALUES(#{busId},#{driverId},#{routeId},#{startTime},#{dTime},#{direction},0,#{nextStationId})")
     Integer insertSchedule(Schedule schedule);//插入一条新的站点信息
     @Update("update db_schedule set is_done = 1 where id=#{id}")
     Integer setIsDone(@Param("id") Integer id);

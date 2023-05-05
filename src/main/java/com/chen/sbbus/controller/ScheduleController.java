@@ -72,6 +72,7 @@ public class ScheduleController {
     @GetMapping("/page")
     public R getAllScheduleByPage(@RequestParam("currentPage")int currentPage,
                                @RequestParam("pageSize")int pageSize){
+        System.out.println(scheduleService.getScheduleByPage(currentPage, pageSize).toString());
         return new R(true,scheduleService.getScheduleByPage(currentPage, pageSize));
     }
 

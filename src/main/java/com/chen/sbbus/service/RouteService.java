@@ -12,7 +12,8 @@ public interface RouteService extends IService<Routes> {
 
     Routes getRoutesById(Integer id);
 
-    IPage<Routes> getRouteByPage(Integer currentPage, Integer pageSize, String name);//分页查询
+    IPage<Routes> getRoutesByPage(Integer currentPage, Integer pageSize, String name);//分页查询
 
     List<String> convertStringToList(String input);
+
 }

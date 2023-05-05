@@ -1,5 +1,6 @@
 package com.chen.sbbus.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.chen.sbbus.entity.Routes;
 import com.chen.sbbus.service.RouteService;
 import com.chen.sbbus.utils.R;
@@ -51,11 +52,12 @@ public class RouteController {
     //分页查询接口
     //接口路径： 相当于 /user/page?currentPage=1&pageSize=5
     //使用@RequestParam接收
-    @GetMapping("/page")
+    @GetMapping("/pageList")
     public R getAllRouteByPage(@RequestParam("currentPage")int currentPage,
                                @RequestParam("pageSize")int pageSize,
                                @RequestParam("name")String name){
-        return new R(true,routeService.getRouteByPage(currentPage, pageSize,name));
+        IPage<Routes> routesByPage = routeService.getRoutesByPage(currentPage, pageSize, name);
+        return new R(true,routesByPage);
     }
 
 }

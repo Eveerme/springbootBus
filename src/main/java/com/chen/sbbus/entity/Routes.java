@@ -4,12 +4,15 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.chen.sbbus.MyObjectDeserializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -18,7 +21,9 @@ import java.util.List;
 @TableName("db_routes")
 
 //@JsonDeserialize(using = MyObjectDeserializer.class)
-public class Routes {
+public class Routes implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Integer id;
     private String start;
@@ -33,5 +38,8 @@ public class Routes {
     @JsonProperty("bId")
     @TableField(exist = false)
     private  Integer bId;
+    @TableField(exist = false)
+    private List<String> stationsNamesList;
+
 
 }

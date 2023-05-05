@@ -24,6 +24,7 @@ public class Feedback {
     private String time;
     private String imgList;
     private Integer isSolve;
+    private String solveTime;
     @TableField(exist = false)
     private List<String> imgLists;
 }

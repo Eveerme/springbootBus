@@ -16,5 +16,7 @@ public interface BusService extends IService<Bus> {
     Boolean deleteBusById(String id);
     Integer updateBusId(String nId, String bId);
 
+    Integer warnById(String id);
+
     void alarmMsg(Integer busId,String msg);
 }

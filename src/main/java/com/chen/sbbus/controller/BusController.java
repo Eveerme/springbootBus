@@ -73,4 +73,10 @@ public class BusController {
         return new R(true);
     }
 
+    @GetMapping("/warn/{id}")
+    public R warnById(@PathVariable("id") String id){
+        return new R(true,busService.warnById(id));
+    }
+
+
 }

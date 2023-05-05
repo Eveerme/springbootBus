@@ -2,10 +2,7 @@ package com.chen.sbbus.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.chen.sbbus.entity.Feedback;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -19,4 +16,6 @@ public interface FeedbackMapper extends BaseMapper<Feedback> {
     Feedback getFeedbackListById(@Param("id") Integer id);
     @Insert("insert into db_feedback(driver_id, content, time,img_list, is_solve) VALUES (#{driverId},#{content},#{time},#{imgList},0)")
     Integer insertFeedback(Feedback feedback);
+    @Update("update db_feedback set is_solve=#{isSolve},solve_time=#{solveTime} where id=#{id}")
+    Integer updateFeedbackIsSolve(Feedback feedback);
 }
